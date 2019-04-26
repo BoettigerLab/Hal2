@@ -710,17 +710,17 @@ if (__name__ == "__main__"):
     cam = Camera(1)
     reps = 1000
 
-    if False:
+    if True:
         cam.setAOI(772, 566, 200, 200)
         cam.setFrameRate(verbose = True)
-        for i in range(100):
+        for i in range(5):
             print("start", i)
-            for j in range(100):
+            for j in range(5):
                 image = cam.captureImage()
             print(" stop")
 
-        #im = Image.fromarray(image)
-        #im.save("temp.png")
+        im = Image.fromarray(image)
+        im.save("C:\storm-control\storm_control\sc_hardware\thorlabs\temp.png")
 
     if False:
         cam.setAOI(100, 100, 300, 300)

@@ -45,7 +45,7 @@
       <parameters>
 
     <!-- The default color table. Other options are in hal4000/colorTables/all_tables -->
-    <colortable type="string">idl5.ctbl</colortable>
+    <colortable type="string">ramp_sat.ctbl</colortable>
     
       </parameters>
     </display>
@@ -74,9 +74,9 @@
 
       <!-- List objectives available on this setup here. -->
       <parameters>
-    <flip_horizontal desc="Flip image horizontal (mosaic)" type="boolean">False</flip_horizontal>
+    <flip_horizontal desc="Flip image horizontal (mosaic)" type="boolean">True</flip_horizontal>
     <flip_vertical desc="Flip image vertical (mosaic)" type="boolean">False</flip_vertical>
-    <transpose desc="Transpose image (mosaic)" type="boolean">False</transpose>
+    <transpose desc="Transpose image (mosaic)" type="boolean">True</transpose>
 
     <objective desc="Current objective" type="string" values="obj1,obj2,obj3">obj1</objective>
     <obj1 desc="Objective 1" type="custom">60x,0.108,0.0,0.0</obj1>
@@ -117,21 +117,20 @@
       <module_name type="string">storm_control.hal4000.camera.camera</module_name>
       <camera>
     <master type="boolean">True</master>
-    <class_name type="string">NoneCameraControl</class_name>
-    <module_name type="string">storm_control.hal4000.camera.noneCameraControl</module_name>
+    <class_name type="string">HamamatsuCameraControl</class_name>
+    <module_name type="string">storm_control.hal4000.camera.hamamatsuCameraControl</module_name>
     <parameters>
     
-      <!-- This is specific to the emulated camera. -->
-      <roll type="float">1.0</roll>
-
+	  <!-- Which camera to use -->
+	  <camera_id type="int">0</camera_id>
           <!-- These should be specified for every camera, and cannot be changed
            in HAL when running. -->
       <!-- These are the display defaults, not the camera range. -->
-      <default_max type="int">300</default_max> 
-      <default_min type="int">0</default_min>
+      <default_max type="int">2000</default_max> 
+      <default_min type="int">100</default_min>
       <flip_horizontal type="boolean">False</flip_horizontal>
-      <flip_vertical type="boolean">False</flip_vertical>
-      <transpose type="boolean">False</transpose>
+      <flip_vertical type="boolean">True</flip_vertical>
+      <transpose type="boolean">True</transpose>
 
       <!-- These can be changed / editted. -->
 
@@ -201,43 +200,46 @@
         <source type="string">/Dev1/port0/line1</source>
       </do_task>
     </ilm405>    
+    
+	<mcl>
+	  <ao_task>
+	    <source type="string">/Dev1/ao0</source>
+	  </ao_task>
+	</mcl>
+    
       </configuration>
       
     </daq>
 
-    <!-- Filter wheel control GUI. -->
-    <filter_wheel>
-      <class_name type="string">FilterWheel</class_name>
-      <module_name type="string">storm_control.hal4000.miscControl.filterWheel</module_name>
-      <configuration>
-    <filter_wheel_fn type="string">none_em_filter_wheel</filter_wheel_fn>
-    <filters type="string">DAPI,Cy2,Cy3,A647,A750,None</filters>
-      </configuration>
-    </filter_wheel>
-    
-    <!-- Focus lock control GUI. -->
+  
+      <!-- Focus lock control GUI. -->
     <focuslock>
       <class_name type="string">FocusLock</class_name>
       <module_name type="string">storm_control.hal4000.focusLock.focusLock</module_name>
       <configuration>
     <ir_laser type="string">none_irlaser</ir_laser>
     <ir_power type="int">10</ir_power>
-    <lock_modes type="string">NoLockMode,AutoLockMode,AlwaysOnLockMode,OptimalLockMode,CalibrationLockMode</lock_modes>
-    <qpd type="string">none_qpd</qpd>
-    <z_stage type="string">none_zstage</z_stage>
-    <parameters>
-      <find_sum>
-        <step_size type="float">1.0</step_size>
-      </find_sum>
-      <locked>
-        <buffer_length type="int">5</buffer_length>
-        <offset_threshold type="float">20.0</offset_threshold>
-      </locked>
-      <jump_size type="float">0.1</jump_size>
-    </parameters>
+    <lock_modes type="string">NoLockMode,AutoLockMode,AlwaysOnLockMode,OptimalLockMode,CalibrationLockMode,HardwareZScanLockMode</lock_modes>
+    <qpd type="string">uc480_camera</qpd>
+    <z_stage type="string">mcl_zstage</z_stage>
+    <!--<z_stage type="string">none_zstage</z_stage>-->
+	<parameters>
+	  <find_sum>
+	    <step_size type="float">1.0</step_size>
+	  </find_sum>
+	  <locked>
+	    <buffer_length type="int">5</buffer_length>
+	    <offset_threshold type="float">500.0</offset_threshold>
+	  </locked>
+	  <scan>
+            <scan_step type="float">1.0</scan_step>
+	    <offset_threshold type="float">10000.0</offset_threshold>
+          </scan>
+	  <jump_size type="float">0.1</jump_size>
+	</parameters>
       </configuration>
     </focuslock>
-    
+  
     <!-- Illumination (lasers, shutters, etc) control GUI. -->
     <illumination>
       <class_name type="string">Illumination</class_name>
@@ -353,108 +355,80 @@
     <laser_id type="int">6</laser_id>
     <used_during_filming type="boolean">True</used_during_filming>
       </configuration>
-    </Lumencor750>
+    </Lumencor750> 
 
-      
-    <none_irlaser>
+    <!-- Decided on no IR control -->
+     <none_irlaser>
       <module_name type="string">storm_control.sc_hardware.none.noneIRLaserModule</module_name>
       <class_name type="string">NoneIRLaserModule</class_name>
     </none_irlaser>
     
-    <none_qpd>
-      <module_name type="string">storm_control.sc_hardware.none.noneQPDModule</module_name>
-      <class_name type="string">NoneQPDModule</class_name>
+         <!-- Ludl stage -->
+    <ludl_stage>
+      <module_name type="string">storm_control.sc_hardware.ludl.ludlModule</module_name>
+      <class_name type="string">LudlStageRS232</class_name>
+      
+      <configuration>	
+	<com_port type="string">COM4</com_port>
+      </configuration>
+    </ludl_stage>   
+
+      <!-- LUDL Z piezo -->
+    <mcl_zstage>
+      <module_name type="string">storm_control.sc_hardware.ludl.ludlVoltageZModule</module_name>
+      <class_name type="string">LudlVoltageZ</class_name>
 
       <configuration>
-    <parameters>
-      <max_voltage type="float">10.0</max_voltage>
-      <min_voltage type="float">-10.0</min_voltage>
-      <offset_has_center_bar type="boolean">True</offset_has_center_bar>
-      <offset_maximum type="float">0.6</offset_maximum>
-      <offset_minimum type="float">-0.6</offset_minimum>
-      <offset_warning_high type="float">0.5</offset_warning_high>
-      <offset_warning_low type="float">-0.5</offset_warning_low>
-      <sum_maximum type="float">1000.0</sum_maximum>
-      <sum_minimum type="float">0.0</sum_minimum>
-      <sum_warning_low type="float">100.0</sum_warning_low>
-    </parameters>
-    <units_to_microns type="float">1.0</units_to_microns>
-
-    <!-- These are for simulation / testing -->
-    <noise type="float">0.5e-2</noise>
-    <tilt type="float">1.0e-3</tilt>
-    <xy_stage_fn type="string">none_stage</xy_stage_fn>
-    <z_stage_fn type="string">none_zstage</z_stage_fn>
+	<parameters>
+	  <center type="float">200.0</center>
+	  <has_center_bar type="boolean">True</has_center_bar>
+	  <maximum type="float">350.0</maximum>
+	  <minimum type="float">0.0</minimum>
+	  <warning_high type="float">330.0</warning_high>
+	  <warning_low type="float">20.0</warning_low>
+	</parameters>
+	<ao_fn_name type="string">daq.mcl.ao_task</ao_fn_name>
+	<microns_to_volts type="float">0.029</microns_to_volts>
       </configuration>
-    </none_qpd>
+    </mcl_zstage>
 
-    <none_stage>
-      <module_name type="string">storm_control.sc_hardware.none.noneStageModule</module_name>
-      <class_name type="string">NoneStageModule</class_name>
-
-      <configuration>
-    <velocity type="float">100.0</velocity>
-      </configuration>
-    </none_stage>
-    
-    <none_wheel1>
-      <module_name type="string">storm_control.sc_hardware.none.noneFilterWheelModule</module_name>
-      <class_name type="string">NoneFilterWheelModule</class_name>
-    </none_wheel1>
-
-    <none_zstage>
-      <module_name type="string">storm_control.sc_hardware.none.noneZStageModule</module_name>
-      <class_name type="string">NoneZStageModule</class_name>
-
-      <configuration>
-    <parameters>
-      <center type="float">50.0</center>
-      <has_center_bar type="boolean">True</has_center_bar>
-      <maximum type="float">100.0</maximum>
-      <minimum type="float">0.0</minimum>
-      <warning_high type="float">95.0</warning_high>
-      <warning_low type="float">5.0</warning_low>
-    </parameters>
-      </configuration>
-    </none_zstage>
-
-    <!-- Progression control GUI -->
-    <progressions>
-      <module_name type="string">storm_control.hal4000.progressions.progressions</module_name>
-      <class_name type="string">Progressions</class_name>
-      <configuration>
-    <illumination_functionality type="string">illumination</illumination_functionality>
-
-    <frames type="int">100</frames>
-    <increment type="float">0.01</increment>
-    <starting_value type="float">0.1</starting_value>
-      </configuration>
-    </progressions>
-
-    <!-- sCMOS calibration module -->
-    <scmos_cal>
-      <module_name type="string">storm_control.hal4000.miscControl.scmosCalibration</module_name>
-      <class_name type="string">SCMOSCalibration</class_name>
-    </scmos_cal>
-        
-    <!-- Spot counter and GUI -->
-    <spotcounter>
-      <module_name type="string">storm_control.hal4000.spotCounter.spotCounter</module_name>
-      <class_name type="string">SpotCounter</class_name>        
-      <configuration>
-    <max_threads type="int">4</max_threads>
-    <max_size type="int">263000</max_size>
-      </configuration>
-    </spotcounter>
 
     <!-- Stage control GUI -->
     <stage>
+      <class_name type="string">Stage</class_name>
       <module_name type="string">storm_control.hal4000.stage.stage</module_name>
-      <class_name type="string">Stage</class_name>        
       <configuration>
-    <stage_functionality type="string">none_stage</stage_functionality>
+	<stage_functionality type="string">ludl_stage</stage_functionality>
       </configuration>
     </stage>
+
+    <!-- Thorlabs UC480 camera for the focus lock -->
+    <uc480_camera>
+      <class_name type="string">UC480Camera</class_name>
+      <module_name type="string">storm_control.sc_hardware.thorlabs.uc480CameraModule</module_name>
+      <configuration>
+	<parameters>
+	  <offset_has_center_bar type="boolean">True</offset_has_center_bar>
+	  <offset_maximum type="float">1.0</offset_maximum>
+	  <offset_minimum type="float">-1.0</offset_minimum>
+	  <offset_warning_high type="float">0.8</offset_warning_high>
+	  <offset_warning_low type="float">-0.8</offset_warning_low>	  
+	  <sum_maximum type="float">100000.0</sum_maximum>
+	  <sum_minimum type="float">50.0</sum_minimum>
+	  <sum_warning_low type="float">10000.0</sum_warning_low>
+	</parameters>
+	<background type="int">100000</background>
+	<camera_id type="int">1</camera_id>
+	<ini_file type="string">uc480_settings.ini</ini_file>
+	<offset_file type="string">C:\storm-control\storm_control\hal4000\data/cam_offsets_storm65.txt</offset_file>
+	<pixel_clock type="int">25</pixel_clock>
+    <sigma type="float">10.0</sigma>
+	<uc480_dll type="string">c:/windows/system32/uc480_64.dll</uc480_dll>
+	<x_width type="int">300</x_width>
+	<y_width type="int">100</y_width>
+	<units_to_microns type="float">0.007</units_to_microns>
+      </configuration>
+    </uc480_camera>
 
     <!-- TCP control -->
     <tcp_control>
