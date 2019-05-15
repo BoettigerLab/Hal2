@@ -54,6 +54,8 @@ class AOTF(object):
                 aotf = ctypes.cdll.LoadLibrary('C:\Program Files\Crystal Technology\AOTF Utilities\AotfLibrary\LegacyAotfLibrary\DLL\AotfLibrary')
             elif os.path.exists('C:\Program Files\Crystal Technology\Developer\AotfLibrary\DLL\AotfLibrary.dll'):
                 aotf = ctypes.cdll.LoadLibrary('C:\Program Files\Crystal Technology\Developer\AotfLibrary\DLL\AotfLibrary')
+            elif os.path.exists('C:\MicroscopeHardware\Crystal Technology\Developer\AotfLibrary\Dll\AotfLibrary.dll'):
+                aotf = ctypes.cdll.LoadLibrary('C:\MicroscopeHardware\Crystal Technology\Developer\AotfLibrary\Dll\AotfLibrary.dll')
             else:
                 print("Failed to load AotfLibrary.dll")
 

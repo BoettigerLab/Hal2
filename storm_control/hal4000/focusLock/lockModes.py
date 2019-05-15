@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 """
 These classes implement various focus lock modes. They determine
-all the behaviors of the focus lock.
+all the behaviors of the focus lock. 
+This is the Py3 version. 
 
 Hazen 05/15
 """

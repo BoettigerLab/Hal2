@@ -5,7 +5,7 @@
   <directory type="directory">C:/Users/Beta/Data/</directory>
 
   <!-- The setup name -->
-  <setup_name type="string">none</setup_name>
+  <setup_name type="string">scope2</setup_name>
 
   <!-- The ui type, this is 'classic' or 'detached' -->
   <ui_type type="string">classic</ui_type>
@@ -45,7 +45,7 @@
       <parameters>
 
 	<!-- The default color table. Other options are in hal4000/colorTables/all_tables -->
-	<colortable type="string">idl5.ctbl</colortable>
+	<colortable type="string">ramp.ctbl</colortable>
 	
       </parameters>
     </display>
