@@ -25,6 +25,10 @@ import os
 import signal
 import time
 
+import sys # beacause python is extremely stupid and can't read my .pth file 
+sys.path.append(r'C:\Users\Scope3\Desktop\MicroscopeSoftware\Hal2')
+# print(sys.path)
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 import storm_control.sc_library.halExceptions as halExceptions
