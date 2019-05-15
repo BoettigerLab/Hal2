@@ -537,8 +537,8 @@
         <pixel_clock type="int">25</pixel_clock>
         <sigma type="float">3.5</sigma>
         <uc480_dll type="string">c:/windows/system32/uc480_64.dll</uc480_dll>
-        <use_storm_analysis type="boolean">True</use_storm_analysis>
-        <x_width type="int">700</x_width>
+        <use_storm_analysis type="boolean">False</use_storm_analysis>
+        <x_width type="int">500</x_width>
         <y_width type="int">100</y_width>
         <units_to_microns type="float">0.264</units_to_microns>
       </configuration>
