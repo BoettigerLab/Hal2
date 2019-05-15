@@ -6,7 +6,7 @@ Tested on :
    GS3-U3-51S5M
    GS3-U3-41C6NIR
 
-Hazen 05/17
+Hazen 01/19
 """
 import storm_control.sc_hardware.pointGrey.spinnaker as spinnaker
 import storm_control.sc_library.parameters as params
@@ -30,52 +30,38 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
                                                                             parameters = self.parameters)
 
         # Initialize library.
-        spinnaker.loadSpinnakerDLL(config.get("pgrey_dll"))
-        spinnaker.spinSystemGetInstance()
+        spinnaker.pySpinInitialize(verbose = False)
 
-        # Get the first camera & set some defaults.
-        self.camera = spinnaker.spinGetCamera(config.get("camera_id"))
+        # Get the camera & set some defaults.
+        self.camera = spinnaker.getCamera(config.get("camera_id"))
 
-        # In order to turn of pixel defect correction the camera has to
-        # be in video mode 0.
-        self.camera.getProperty("VideoMode")
+        # In order to turn off pixel defect correction the camera has
+        # to be in video mode 0.
         self.camera.setProperty("VideoMode", "Mode0")
-        
-        self.camera.getProperty("pgrDefectPixelCorrectionEnable")
         self.camera.setProperty("pgrDefectPixelCorrectionEnable", False)
         
-        # Change to 12 bit mode.
-        self.camera.getProperty("PixelFormat")
+        # Set pixel format.
         #self.camera.setProperty("PixelFormat", "Mono12Packed")
         #self.camera.setProperty("PixelFormat", "Mono12p")
         self.camera.setProperty("PixelFormat", "Mono16")
 
-        self.camera.setProperty("VideoMode", "Mode7")
+        self.camera.setProperty("VideoMode", config.get("video_mode"))
                 
         # We don't want any of these 'features'.
-        self.camera.getProperty("AcquisitionFrameRateAuto")
         self.camera.setProperty("AcquisitionFrameRateAuto", "Off")
-
-        self.camera.getProperty("ExposureAuto")
         self.camera.setProperty("ExposureAuto", "Off")
-
-        self.camera.getProperty("GainAuto")
         self.camera.setProperty("GainAuto", "Off")        
 
         if self.camera.hasProperty("pgrExposureCompensationAuto"):
-            self.camera.getProperty("pgrExposureCompensationAuto")
             self.camera.setProperty("pgrExposureCompensationAuto", "Off")
 
         if self.camera.hasProperty("BlackLevelClampingEnable"):
-            self.camera.getProperty("BlackLevelClampingEnable")
             self.camera.setProperty("BlackLevelClampingEnable", False)
 
         if self.camera.hasProperty("SharpnessEnabled"):
-            self.camera.getProperty("SharpnessEnabled")
             self.camera.setProperty("SharpnessEnabled", False)
 
         if self.camera.hasProperty("GammaEnabled"):
-            self.camera.getProperty("GammaEnabled")
             self.camera.setProperty("GammaEnabled", False)
 
         #
@@ -83,7 +69,6 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
         # camera. We try and turn it off but that seems to be much
         # harder to do than one would hope.
         #
-        self.camera.getProperty("OnBoardColorProcessEnabled")
         self.camera.setProperty("OnBoardColorProcessEnabled", False)
 
         # Verify that we have turned off some of these 'features'.
@@ -92,7 +77,7 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
                         "SharpnessEnabled",
                         "GammaEnabled"]:
             if self.camera.hasProperty(feature):
-                assert not self.camera.getProperty(feature).spinNodeGetValue()
+                assert not self.camera.getProperty(feature).getValue()
 
         # Configure 'master' cameras to not use triggering.
         #
@@ -101,18 +86,11 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
             self.camera.setProperty("TriggerMode", "Off")
 
             # This line is connected to the DAQ.
-            self.camera.getProperty("LineSelector")
             self.camera.setProperty("LineSelector", "Line1")
-            self.camera.getProperty("LineSource")
             self.camera.setProperty("LineSource", "ExposureActive")
 
             # This line is connected to the other cameras.
-            #
-            # FIXME: This is not working correctly. You have to start
-            #        the Point Grey software to configure this properly.
-            #
             self.camera.setProperty("LineSelector", "Line2")
-            self.camera.getProperty("LineMode")
             self.camera.setProperty("LineMode", "Output")
             self.camera.setProperty("LineSource", "ExposureActive")
 
@@ -126,9 +104,7 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
         #
         else:
             self.camera.setProperty("TriggerMode", "On")
-            self.camera.getProperty("TriggerSource")
             self.camera.setProperty("TriggerSource", "Line3")
-            self.camera.getProperty("TriggerOverlap")
             self.camera.setProperty("TriggerOverlap", "ReadOut")
 
         #
@@ -159,7 +135,7 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
                                                            name = "AcquisitionFrameRate",
                                                            value = 10.0,
                                                            max_value = 500.0,
-                                                           min_value = self.camera.getProperty("AcquisitionFrameRate").spinNodeGetMinimum()))
+                                                           min_value = self.camera.getProperty("AcquisitionFrameRate").getMinimum()))
 
         # Slave cameras can set "ExposureTime".
         #
@@ -172,8 +148,8 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
             self.parameters.add(params.ParameterRangeFloat(description = "Exposure time (us)",
                                                            name = "ExposureTime",
                                                            value = 99800.0,
-                                                           max_value = self.camera.getProperty("ExposureTime").spinNodeGetMaximum(),
-                                                           min_value = self.camera.getProperty("ExposureTime").spinNodeGetMinimum()))
+                                                           max_value = self.camera.getProperty("ExposureTime").getMaximum(),
+                                                           min_value = self.camera.getProperty("ExposureTime").getMinimum()))
             
         # Load properties as required by the spinnaker Python wrapper.
         for pname in self.pgrey_props:
@@ -183,12 +159,12 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
         self.parameters.setv("max_intensity", max_intensity)
 
         # Set chip size and HAL parameter ranges.
-        x_chip = self.camera.getProperty("WidthMax").spinNodeGetValue()
+        x_chip = self.camera.getProperty("WidthMax").getValue()
         self.parameters.setv("x_chip", x_chip)
         for pname in ["x_end", "x_start"]:
             self.parameters.getp(pname).setMaximum(x_chip)
 
-        y_chip = self.camera.getProperty("HeightMax").spinNodeGetValue()
+        y_chip = self.camera.getProperty("HeightMax").getValue()
         self.parameters.setv("y_chip", y_chip)
         for pname in ["y_end", "y_start"]:
             self.parameters.getp(pname).setMaximum(y_chip)        
@@ -204,14 +180,14 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
         self.parameters.add(params.ParameterRangeFloat(description = "Black level",
                                                        name = "BlackLevel",
                                                        value = 1.0,
-                                                       max_value = self.camera.getProperty("BlackLevel").spinNodeGetMaximum(),
-                                                       min_value = self.camera.getProperty("BlackLevel").spinNodeGetMinimum()))
+                                                       max_value = self.camera.getProperty("BlackLevel").getMaximum(),
+                                                       min_value = self.camera.getProperty("BlackLevel").getMinimum()))
         
         self.parameters.add(params.ParameterRangeFloat(description = "Gain",
                                                        name = "Gain",
                                                        value = 10.0,
-                                                       max_value = self.camera.getProperty("Gain").spinNodeGetMaximum(),
-                                                       min_value = self.camera.getProperty("Gain").spinNodeGetMinimum()))
+                                                       max_value = self.camera.getProperty("Gain").getMaximum(),
+                                                       min_value = self.camera.getProperty("Gain").getMinimum()))
 
         self.parameters.add(params.ParameterRangeInt(description = "AOI height",
                                                      name = "Height",
@@ -310,15 +286,15 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
                         continue
 
                 param = self.parameters.getp(pname)
-                param.setMaximum(self.camera.getProperty(pname).spinNodeGetMaximum())
-                param.setMinimum(self.camera.getProperty(pname).spinNodeGetMinimum())
+                param.setMaximum(self.camera.getProperty(pname).getMaximum())
+                param.setMinimum(self.camera.getProperty(pname).getMinimum())
                 param.setv(parameters.get(pname))
 
             # Set the exposure time to be the maximum given the current frame rate.
             if self.is_master:
-                self.camera.setProperty("ExposureTime", self.camera.getProperty("ExposureTime").spinNodeGetMaximum())
-                self.parameters.setv("exposure_time", 1.0e-6 * self.camera.getProperty("ExposureTime").spinNodeGetValue())
-                self.parameters.setv("fps", self.camera.getProperty("AcquisitionFrameRate").spinNodeGetValue())
+                self.camera.setProperty("ExposureTime", self.camera.getProperty("ExposureTime").getMaximum())
+                self.parameters.setv("exposure_time", 1.0e-6 * self.camera.getProperty("ExposureTime").getValue())
+                self.parameters.setv("fps", self.camera.getProperty("AcquisitionFrameRate").getValue())
 
             # Update camera frame size.
             self.parameters.setv("bytes_per_frame",
@@ -331,6 +307,16 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
 
     def startCamera(self):
         #
+        # Start the camera, then change the source for the line. There
+        # can be several blank frames before the shutters start, but I
+        # think this is better than having the shutters start running
+        # before the master camera is ready to record. The slave cameras
+        # work fine either way, and they will almost always have a
+        # single empty frame before the shutters start.
+        #
+        super().startCamera()
+        
+        #
         # It appears that the camera continues to put out pulses even
         # when it is (at least in theory) not actually running. This
         # messes up the DAQ timing. To try and solve this problem we
@@ -340,7 +326,6 @@ class PointGreyCameraControl(cameraControl.HWCameraControl):
         if self.is_master:
             self.camera.setProperty("LineSelector", "Line1")
             self.camera.setProperty("LineSource", "ExposureActive")
-        super().startCamera()
 
     def stopCamera(self):
         super().stopCamera()

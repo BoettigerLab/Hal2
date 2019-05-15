@@ -821,7 +821,7 @@ class HamamatsuCameraMR(HamamatsuCamera):
         self.old_frame_bytes = -1
 
         self.setPropertyValue("output_trigger_kind[0]", 2)
-
+        self.setPropertyValue("output_trigger_polarity[0]", 2) #2 - positive, 1 - negative
     def getFrames(self):
         """
         Gets all of the available frames.
@@ -936,7 +936,7 @@ if (__name__ == "__main__"):
         print("camera 0 model:", hcam.getModelInfo(0))
 
         # List support properties.
-        if False:
+        if True:
             print("Supported properties:")
             props = hcam.getProperties()
             for i, id_name in enumerate(sorted(props.keys())):
@@ -1003,7 +1003,7 @@ if (__name__ == "__main__"):
             hcam.stopAcquisition()
 
         # Test 'fixed_length' acquisition.
-        if True:
+        if False:
             for j in range (10000):
                 print("Testing fixed length acquisition")
                 hcam.setACQMode("fixed_length", number_frames = 10)

@@ -112,6 +112,8 @@ class DaqModule(hardwareModule.HardwareModule):
 
     def daqWaveforms(self, message):
         waveforms = message.getData()["waveforms"]
+        lengths = [waveform_.getWaveformLength() for waveform_ in waveforms]+[self.waveform_len]
+        print("Lengths of waveforms:",lengths)
         for waveform in waveforms:
             assert isinstance(waveform, DaqWaveform)
 
@@ -119,9 +121,14 @@ class DaqModule(hardwareModule.HardwareModule):
             # length with the same oversampling.
             if (self.oversampling == 0):
                 self.oversampling = waveform.getOversampling()
-                self.waveform_len = waveform.getWaveformLength()
+                #self.waveform_len = waveform.getWaveformLength()
+                self.waveform_len = numpy.max(lengths)
             else:
                 assert (self.oversampling == waveform.getOversampling())
+                waveform_len_ = waveform.getWaveformLength()
+                if waveform_len_ < self.waveform_len:
+                    repeats = int(self.waveform_len/waveform_len_)+1
+                    waveform.waveform = numpy.tile(waveform.waveform,repeats)[:self.waveform_len]
                 assert (self.waveform_len == waveform.getWaveformLength())
                 
             if waveform.isAnalog():

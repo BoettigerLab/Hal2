@@ -33,11 +33,12 @@ def fitAFunctionLS(data, params, fn):
         
         global last_warning_time
         if last_warning_time is None or ((time.time() - last_warning_time) > 2.0):
-            print("> QPD-480 Slow fitting detected")
-            print(">", infodict["nfev"], time.time() - start_time)
-            print(">", params)
-            print(">", result)
-            print()
+            if False:
+                print("> QPD-480 Slow fitting detected")
+                print(">", infodict["nfev"], time.time() - start_time)
+                print(">", params)
+                print(">", result)
+                print()
             last_warning_time = time.time()
         
     return [result, good]
