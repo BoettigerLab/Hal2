@@ -5,7 +5,7 @@
   <directory type="directory">C:/Data/</directory>
 
   <!-- The setup name -->
-  <setup_name type="string">system3</setup_name>
+  <setup_name type="string">system4</setup_name>
 
   <!-- The ui type, this is 'classic' or 'detached' -->
   <ui_type type="string">classic</ui_type>
@@ -387,10 +387,10 @@
     </ldc_irlaser>
     -->
     
-    <!-- Clemex stage -->
+    <!-- Clemex stage 
     <clemex_stage>
       <module_name type="string">storm_control.sc_hardware.marzhauser.marzhauserModule</module_name>
-      <class_name type="string">MarzhauserStageRS232</class_name> <!-- MarzhauserStageRS232  MarzhauserStageTango -->
+      <class_name type="string">MarzhauserStageRS232</class_name> 
       
       <configuration>	
         <port type="string">COM11</port>
@@ -398,8 +398,9 @@
         <velocity type="float">50.0</velocity>
       </configuration>
     </clemex_stage>   
+    -->
     
-    <!-- PI stage
+    <!-- PI stage    -->
     <pi_stage>
       <module_name type="string">storm_control.sc_hardware.physikInstrumente.E873Module</module_name>
       <class_name type="string">E873Stage</class_name>
@@ -409,7 +410,7 @@
           <serialnum type="float">119006811</serialnum>
       </configuration>
     </pi_stage>
-     -->
+  
       
     <!-- Thorlabs stage
     <thorlabs_stage>
@@ -506,7 +507,7 @@
       <module_name type="string">storm_control.hal4000.stage.stage</module_name>
       <class_name type="string">Stage</class_name>	    
       <configuration>
-	<stage_functionality type="string">clemex_stage</stage_functionality>  <!-- pi_stage -->
+	<stage_functionality type="string">pi_stage</stage_functionality>  <!-- pi_stage -->
       </configuration>
     </stage>
 

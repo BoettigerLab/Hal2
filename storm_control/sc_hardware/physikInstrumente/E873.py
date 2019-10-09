@@ -1,9 +1,23 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""This example helps you to get used to PIPython."""
+"""
+Connect to a PI stage using the E873 controller and the Q-545.140 translation stages
 
-# using Physik Instrumente (PI) GmbH & Co. KG
-# sc_hardware.physikInstrumente.E873.py
+using Physik Instrumente (PI) GmbH & Co. KG
+sc_hardware.physikInstrumente.E873.py
+
+Alistair Boettiger, April 2019
+
+V1.1
+Functional connection to x-y axes of PI piezo stage
+
+To do:
+1. Calibrate stage step sizes
+2. Provide instructions for installing the PIPython packages
+3. Fix the python path stupidity
+4. Pass serial numbers as a parameter from  the xml file
+"""
+
 
 from __future__ import print_function
 
@@ -31,13 +45,13 @@ class E873():
     # Connect to the PI E873 stage.
     #
     #
-    def __init__(self, serialnum = '119006811'):   # 
+    def __init__(self, serialnum = '119006811'):   # should become a parameter, see other stages
         print(serialnum)
     
         # Connect to the PI E873 stage.
         # with GCSDevice(CONTROLLERNAME) as pidevice:    
         pidevice = GCSDevice(CONTROLLERNAME) 
-        pidevice.ConnectUSB(serialnum='119006811') # ='119006811'
+        pidevice.ConnectUSB(serialnum) #   pidevice.ConnectUSB(serialnum='119006811')
         print('connected: {}'.format(pidevice.qIDN().strip()))
 
         # Show the version info which is helpful for PI support when there
@@ -128,7 +142,28 @@ class E873():
                 print('requested move outside max range!')
             # pitools.waitontarget(self.pidevice, axes=1) # actively hold on target
             # pitools.waitontarget(self.pidevice, axes=2) # actively hold on target
-            
+     
+    def goAbsoluteZ(self, z):
+        if self.good:
+            z0 = self.pidevice.qPOS(3)[3]  # query single axis [need to check units]
+                # position = pidevice.qPOS()[str(axis)] # query all axes
+            Z = z * self.um_to_unit
+            if Z > self.rangemin['3'] and Z < self.rangemax['3']:
+                self.pidevice.MOV(3, Z)
+            else:
+                print('requested move outside max range!')
+     
+     def goRelativeZ(self, dz):
+        if self.good:
+            z0 = self.pidevice.qPOS(3)[3]  # query single axis [need to check units]
+                # position = pidevice.qPOS()[str(axis)] # query all axes
+            Z = z0 + dz * self.um_to_unit
+            if Z > self.rangemin['3'] and Z < self.rangemax['3']:
+                self.pidevice.MOV(3, Z)
+            else:
+                print('requested move outside max range!')
+           
+           
 
     ## jog
     #
@@ -206,3 +241,6 @@ class E873():
         if self.good:
             pitools._ref_with_pos(self, self.pidevice.axes)
 
+    def zeroZ(self):
+        if self.good:
+            pitools._ref_with_pos(self, self.pidevice.axes)

@@ -5,7 +5,7 @@
   <directory type="directory">C:/Data/</directory>
 
   <!-- The setup name -->
-  <setup_name type="string">system3</setup_name>
+  <setup_name type="string">scope4</setup_name>
 
   <!-- The ui type, this is 'classic' or 'detached' -->
   <ui_type type="string">classic</ui_type>
@@ -74,12 +74,12 @@
 
       <!-- List objectives available on this setup here. -->
       <parameters>
-	<flip_horizontal desc="Flip image horizontal (mosaic)" type="boolean">True</flip_horizontal>
+	<flip_horizontal desc="Flip image horizontal (mosaic)" type="boolean">False</flip_horizontal>
 	<flip_vertical desc="Flip image vertical (mosaic)" type="boolean">False</flip_vertical>
-	<transpose desc="Transpose image (mosaic)" type="boolean">True</transpose>
+	<transpose desc="Transpose image (mosaic)" type="boolean">False</transpose>
 
 	<objective desc="Current objective" type="string" values="obj1,obj2">obj1</objective>
-	<obj1 desc="Objective 1" type="custom">60x,0.1,0.0,0.0</obj1>
+	<obj1 desc="Objective 1" type="custom">60x,0.180,0.0,0.0</obj1>
 	<obj2 desc="Objective 2" type="custom">10x,1.60,0.0,0.0</obj2>
       </parameters>
     </mosaic>
@@ -103,44 +103,45 @@
 	Everything else is optional, but you probably want at least one camera.
     -->
 
-    <!-- Camera control. -->
-    <!--
-	Note that the cameras must have the names "camera1", "camera2", etc..
-	
-	Cameras are either "master" (they provide their own hardware timing)
-	or "slave" they are timed by another camera. Each time the cameras
-	are started the slave cameras are started first, then the master cameras.
-    -->
 
-     <camera1>
+    <camera1>
       <class_name type="string">Camera</class_name>
       <module_name type="string">storm_control.hal4000.camera.camera</module_name>
       <camera>
-        <master type="boolean">True</master>
-        <class_name type="string">HamamatsuCameraControl</class_name>
-        <module_name type="string">storm_control.hal4000.camera.hamamatsuCameraControl</module_name>
-        <parameters>
-          <!-- Which camera to use -->
-          <camera_id type="int">0</camera_id>
+	<master type="boolean">True</master>
+	<class_name type="string">PointGreyCameraControl</class_name>
+	<module_name type="string">storm_control.hal4000.camera.pointgreyCameraControl</module_name>
+	<parameters>
+	  <!-- Which camera to use -->
+	  <camera_id type="string">19037109</camera_id> <!-- FLIR/Pt Camera Grey Serial Num -->
+	  
+	  <!-- What value to use for the VideoMode property. -->
+	  <video_mode type="string">Mode7</video_mode>
+      
 
-          <!-- These are the display defaults, not the camera range. -->
-          <default_max type="int">2000</default_max> 
-          <default_min type="int">100</default_min>
-          <flip_horizontal type="boolean">True</flip_horizontal>
-          <flip_vertical type="boolean">False</flip_vertical>
-          <transpose type="boolean">True</transpose>
+	  <!-- These are the display defaults, not the camera range. -->
+	  <default_max type="int">200</default_max> 
+	  <default_min type="int">30</default_min>
+	  <flip_horizontal type="boolean">False</flip_horizontal>
+	  <flip_vertical type="boolean">False</flip_vertical>
+	  <transpose type="boolean">False</transpose>
 
-          <!-- This is the extension to use (if any) when saving data from this camera. -->
-          <extension type="string"></extension>
-          
-          <!-- Whether or not data from this camera is saved during filming. -->
-          <saved type="boolean">True</saved>
-        </parameters>
+	  <!-- These can be changed / editted. -->
+
+	  <!-- This is the extension to use (if any) when saving data from this camera. -->
+	  <extension type="string"></extension>
+	  
+	  <!-- Whether or not data from this camera is saved during filming. -->
+	  <saved type="boolean">True</saved>
+
+	</parameters>
       </camera>
     </camera1>
 
+
+
     
-  <!-- DAQ control -->
+   <!-- DAQ control -->
     <daq>
       <module_name type="string">storm_control.sc_hardware.nationalInstruments.nidaqModule</module_name>
       <class_name type="string">NidaqModule</class_name>
@@ -193,15 +194,14 @@
 
         <mcl>
           <ao_task>
-            <source type="string">/Dev3/ao0</source>
+            <source type="string">/Dev3/ao1</source>
           </ao_task>
         </mcl>        
       </configuration>
     </daq>
 
-
      
-<!-- Focus lock control GUI. 
+<!-- Focus lock control GUI. -->
     <focuslock>
       <class_name type="string">FocusLock</class_name>
       <module_name type="string">storm_control.hal4000.focusLock.focusLock</module_name>
@@ -223,33 +223,14 @@
 	</parameters>
       </configuration>
     </focuslock>
-     -->
-   <!-- Focus lock control GUI. -->
-    <focuslock>
-      <class_name type="string">FocusLock</class_name>
-      <module_name type="string">storm_control.hal4000.focusLock.focusLock</module_name>
+ 
+   <!-- z-stage control GUI. -->
+    <zStage>
+      <class_name type="string">ZStage</class_name>
+      <module_name type="string">storm_control.hal4000.miscControl.zStage</module_name>
       <configuration>
-        <ir_laser type="string">none_irlaser</ir_laser>
-        <ir_power type="int">10</ir_power>
-        <lock_modes type="string">NoLockMode,AutoLockMode,AlwaysOnLockMode,OptimalLockMode,HardwareZScanLockMode</lock_modes> <!-- CalibrationLockMode -->
-        <qpd type="string">uc480_camera</qpd>
-        <z_stage type="string">mcl_zstage</z_stage>
-        <parameters>
-          <find_sum>
-            <step_size type="float">1.0</step_size>
-          </find_sum>
-          <locked>
-            <buffer_length type="int">5</buffer_length>
-            <offset_threshold type="float">500.0</offset_threshold>
-          </locked>
-          <scan>
-                <scan_step type="float">1.0</scan_step>
-            <offset_threshold type="float">10000.0</offset_threshold>
-              </scan>
-          <jump_size type="float">0.1</jump_size>
-        </parameters>
       </configuration>
-    </focuslock>
+    <zStage>
 
  
       <!-- Illumination (lasers, shutters, etc) control GUI. -->
@@ -282,7 +263,7 @@
         </ch2>
         <ch3>
           <gui_name type="string">545</gui_name>
-          <color type="string">55,255,0</color>
+          <color type="string">255,255,0</color>
           <amplitude_modulation>
             <hw_fn_name>Lumencor561</hw_fn_name>
           </amplitude_modulation>  
@@ -376,6 +357,7 @@
       <class_name type="string">NoneIRLaserModule</class_name>
     </none_irlaser>
     
+    
    <!-- Thorlabs LDC control for IR laser
     <ldc_irlaser>
       <module_name type="string">storm_control.sc_hardware.thorlabs.LDCModule</module_name>
@@ -387,44 +369,20 @@
     </ldc_irlaser>
     -->
     
-    <!-- Clemex stage -->
-    <clemex_stage>
-      <module_name type="string">storm_control.sc_hardware.marzhauser.marzhauserModule</module_name>
-      <class_name type="string">MarzhauserStageRS232</class_name> <!-- MarzhauserStageRS232  MarzhauserStageTango -->
-      
-      <configuration>	
-        <port type="string">COM11</port>
-        <baudrate type="int">57600</baudrate>
-        <velocity type="float">50.0</velocity>
-      </configuration>
-    </clemex_stage>   
-    
-    <!-- PI stage
+    <!-- PI stage -->
     <pi_stage>
       <module_name type="string">storm_control.sc_hardware.physikInstrumente.E873Module</module_name>
       <class_name type="string">E873Stage</class_name>
       
       <configuration>	
-          <com_port type="string">COM6</com_port>
-          <serialnum type="float">119006811</serialnum>
+          <com_port type="string">COM12</com_port>
+          <serialnum type="int">0118048626</serialnum>  
       </configuration>
     </pi_stage>
-     -->
+     
+      <!-- original serial number: 119006811 -->
       
-    <!-- Thorlabs stage
-    <thorlabs_stage>
-      <module_name type="string">storm_control.sc_hardware.thorlabs.BBD103Module</module_name>
-      <class_name type="string">BBD103Stage</class_name>
-      
-      <configuration>	
-          <sn_motor1 type="int">94832870</sn_motor1>
-          <sn_motor2 type="int">94832869</sn_motor2>
-      </configuration>
-    </thorlabs_stage>
-     -->
-       
-       
-      <!-- emtpty/ simulated stage 
+     <!-- Empty stage
     <none_stage>
       <module_name type="string">storm_control.sc_hardware.none.noneStageModule</module_name>
       <class_name type="string">NoneStageModule</class_name>
@@ -433,44 +391,27 @@
 	<velocity type="float">100.0</velocity>
       </configuration>
     </none_stage>
-    -->
+     -->  
 
     <!-- Mad City Labs Z piezo -->
     <mcl_zstage>
       <module_name type="string">storm_control.sc_hardware.madCityLabs.mclVoltageZModule</module_name>
       <class_name type="string">MCLVoltageZ</class_name>
+    
       <configuration>
         <parameters>
-          <center type="float">100.0</center>
+          <center type="float">50.0</center>
           <has_center_bar type="boolean">True</has_center_bar>
-          <maximum type="float">200.0</maximum>
+          <maximum type="float">8000.0</maximum>
           <minimum type="float">0.0</minimum>
-          <warning_high type="float">180.0</warning_high>
-          <warning_low type="float">20.0</warning_low>
+          <warning_high type="float">7500.0</warning_high>
+          <warning_low type="float">500.0</warning_low>
         </parameters>
         <ao_fn_name type="string">daq.mcl.ao_task</ao_fn_name>
-        <microns_to_volts type="float">0.1</microns_to_volts>
+        <microns_to_volts type="float">0.05</microns_to_volts> <!-- was 0.1 for MCL -->
       </configuration>
     </mcl_zstage>
     
-    
-      <!-- Mad City Labs Z piezo (USB?) from STORM3 
-    <mcl_zstage>
-      <module_name type="string">storm_control.sc_hardware.madCityLabs.mclModule</module_name>
-      <class_name type="string">MCLZStage</class_name>
-      <configuration>
-	<parameters>
-	  <center type="float">50.0</center>
-	  <has_center_bar type="boolean">True</has_center_bar>
-	  <maximum type="float">100.0</maximum>
-	  <minimum type="float">0.0</minimum>
-	  <warning_high type="float">90.0</warning_high>
-	  <warning_low type="float">10.0</warning_low>
-	</parameters>
-        <mcl_lib type="string">C:/Program Files/Mad City Labs/NanoDrive/Madlib</mcl_lib>
-      </configuration>
-    </mcl_zstage>
-    -->
 
     <!-- Progression control GUI -->
     <progressions>
@@ -506,7 +447,7 @@
       <module_name type="string">storm_control.hal4000.stage.stage</module_name>
       <class_name type="string">Stage</class_name>	    
       <configuration>
-	<stage_functionality type="string">clemex_stage</stage_functionality>  <!-- pi_stage -->
+	<stage_functionality type="string">pi_stage</stage_functionality>  <!--none_stage  pi_stage-->
       </configuration>
     </stage>
 
@@ -540,12 +481,12 @@
         <ini_file type="string">uc480_settings.ini</ini_file>
         <offset_file type="string">C:/Users/Scope3/Desktop/MicroscopeSoftware/Hal2/storm_control/hal4000/camoffsets_scope3.txt</offset_file>
         <pixel_clock type="int">25</pixel_clock>
-        <sigma type="float">9</sigma>
+        <sigma type="float">3.5</sigma>
         <uc480_dll type="string">c:/windows/system32/uc480_64.dll</uc480_dll>
         <use_storm_analysis type="boolean">False</use_storm_analysis>
-        <x_width type="int">700</x_width>
-        <y_width type="int">200</y_width>
-        <units_to_microns type="float">-0.005</units_to_microns>
+        <x_width type="int">500</x_width>
+        <y_width type="int">100</y_width>
+        <units_to_microns type="float">0.264</units_to_microns>
       </configuration>
     </uc480_camera>
     

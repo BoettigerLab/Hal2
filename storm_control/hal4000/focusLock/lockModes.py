@@ -995,14 +995,18 @@ class HardwareZScanLockMode(AlwaysOnLockMode):
         self.hzs_zvals = None
         
         def interpret_z_offsets_string(z_offsets_string):
-            """Example: '1:4:0.5:2,4,5,5,5' gets converted to '1.,1.,1.5,1.5,2.,2.,2.5,2.5,4.,5.,-1.,-5.5'"""
+            """Example: '1:4:0.5:2,4,5,5,5' gets converted to '1.,1.,1.5,1.5,2.,2.,2.5,2.5,4.,5.,-1.,-5.5'
+            do you mean Example: '1:2.5:0.5:2' gets converted to '1.,1.,1.5,1.5,2.,2.,2.5,2.5'
+            doesn't work: -5:5:.1:2
+            does work: -3,-3,-2,-2,-1,-1,0,0,1,1,2,2,3,3
+            """
             components = z_offsets_string.split(",")
             hzs_zvals = []
             for str_ in components:
                 if ':' in str_:
                     strs = str_.split(':')
                     start,end,step = float(strs[0]),float(strs[1]),float(strs[2])
-                    hzs_zvals_ = numpy.arange(start,end,step)
+                    hzs_zvals_ = numpy.arange(start,end+step,step) # updated to include end value. 
                     if len(strs)==4:
                         repeat = int(strs[3])
                         hzs_zvals_ = hzs_zvals_[numpy.arange(0,len(hzs_zvals_),1./repeat).astype(int)]
@@ -1010,9 +1014,11 @@ class HardwareZScanLockMode(AlwaysOnLockMode):
                 else:
                     hzs_zvals.append(float(str_))
             return numpy.array(hzs_zvals,dtype=float)
+            
         
         if (len(p.get("z_offsets")) > 0):
             self.hzs_zvals = interpret_z_offsets_string(p.get("z_offsets"))
+            # print(self.hzs_zvals)
             #self.hzs_zvals = numpy.array(list(map(float, p.get("z_offsets").split(","))))
 
     def shouldEnableLockButton(self):

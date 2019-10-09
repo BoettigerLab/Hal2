@@ -1,26 +1,24 @@
-#!/usr/bin/env python
-"""
-Mad City Labs (voltage controlled) Z stage functionality.
+'''
+PI voltage Z module
 
-Hazen 05/17
+Alistair Boettiger, 07/19
+adapted from Ludl (voltage controlled) Z stage functionality, George 02/18
+not currently implemented -- it looks like I get all I need from mclVoltageZModule
+possibly update for aesthetic quality later on.
+'''
 
-updates 05/19, Alistair:  copied from ludl VoltageZModule
-
-"""
-
-from PyQt5 import QtCore # added based on ludlVoltageZ. Doesn't look like it is used though. 
+from PyQt5 import QtCore
 
 import storm_control.sc_hardware.baseClasses.voltageZModule as voltageZModule
 
 
-class MCLVoltageZ(voltageZModule.VoltageZ):
+class LudlVoltageZ(voltageZModule.VoltageZ):
     """
     This is a Mad City Labs stage in analog control mode.
     """
     def __init__(self, module_params = None, qt_settings = None, **kwds):
         super().__init__(module_params, qt_settings, **kwds)
 
-    # added from ludulVoltageZModule, (which still claims to be an MCL)
     def handleResponse(self, message, response):
         if message.isType("get functionality"):
             self.z_stage_functionality = voltageZModule.VoltageZFunctionality(

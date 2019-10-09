@@ -137,22 +137,50 @@ class MarzhauserPollingThread(QtCore.QThread):
         self.wait()
         
 
-class MarzhauserStage(stageModule.StageModule):
-
+class MarzhauserStageRS232(stageModule.StageModule):
+    """
+    RS232 connection to stage
+    """
     def __init__(self, module_params = None, qt_settings = None, **kwds):
         super().__init__(**kwds)
 
         configuration = module_params.get("configuration")
         self.stage = marzhauser.MarzhauserRS232(baudrate = configuration.get("baudrate"),
-                                                port = configuration.get("port"))
+                                                port = configuration.get("port"))  #  RS232 stage 
+                                                                                         
         if self.stage.getStatus():
-
             # Set (maximum) stage velocity.
             velocity = configuration.get("velocity")
             self.stage.setVelocity(velocity, velocity)
             self.stage_functionality = MarzhauserStageFunctionality(device_mutex = QtCore.QMutex(),
                                                                     stage = self.stage,
                                                                     update_interval = 500)
+
+        else:
+            self.stage = None
+
+
+
+class MarzhauserStageTango(stageModule.StageModule):
+    """
+    Using the CLEMEX TANGO controller over USB 
+    """
+    def __init__(self, module_params = None, qt_settings = None, **kwds):
+        super().__init__(**kwds)
+
+        configuration = module_params.get("configuration")
+        self.stage = marzhauser.MarzhauserTango(port = configuration.get("port"))  # use Tango
+                                                
+                                                
+        if self.stage.getStatus():
+            
+            #  # Set (maximum) stage velocity.
+            # velocity = configuration.get("velocity")
+            # self.stage.setVelocity(velocity, velocity)
+            self.stage_functionality = MarzhauserStageFunctionality(device_mutex = QtCore.QMutex(),
+                                                                    stage = self.stage,
+                                                                    update_interval = 500)
+            
 
         else:
             self.stage = None

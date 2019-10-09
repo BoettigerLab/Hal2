@@ -573,7 +573,7 @@ if (__name__ == "__main__"):
         cam.setProperty("TriggerMode", "Off")
         cam.setProperty("PixelFormat", "Mono12p")
         cam.setProperty("AcquisitionFrameRateAuto", "Off")
-        cam.setProperty("AcquisitionFrameRate", 10.0)
+        cam.setProperty("AcquisitionFrameRate", 4.0) # was 10
         #cam.setProperty("ExposureTime", 99000.0)
         #cam.setProperty("BlackLevel", 5.0)
         #cam.setProperty("Gain", 20.0)
