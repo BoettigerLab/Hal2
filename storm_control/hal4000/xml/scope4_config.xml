@@ -210,7 +210,7 @@
 	<ir_power type="int">10</ir_power>
 	<lock_modes type="string">NoLockMode,AutoLockMode,AlwaysOnLockMode,OptimalLockMode,CalibrationLockMode,DiagnosticsLockMode</lock_modes>
 	<qpd type="string">uc480_camera</qpd>
-	<z_stage type="string">mcl_zstage</z_stage>
+	<z_stage type="string">pi_controller.z_stage</z_stage> <!-- pi_controller.z_stage   mcl_zstage -->
 	<parameters>
 	  <find_sum>
 	    <step_size type="float">1.0</step_size>
@@ -224,14 +224,52 @@
       </configuration>
     </focuslock>
  
-     <!-- Stage control GUI -->
+ 
+   <!-- XY Stage control GUI -->
     <stage>
-      <module_name type="string">storm_control.hal4000.stage.stage</module_name>
-      <class_name type="string">Stage</class_name>	    
+      <class_name type="string">Stage</class_name>
+      <module_name type="string">storm_control.hal4000.stage.stage</module_name>  
       <configuration>
-	<stage_functionality type="string">none_stage</stage_functionality>  <!--none_stage  pi_stage-->
+	<stage_functionality type="string">pi_controller.xy_stage</stage_functionality>   <!--none_stage  pi_stage   pi_controller.xy_stage -->
       </configuration>
     </stage>
+ 
+    <!-- Z stage control GUI. -->
+    <z_stage>
+      <class_name type="string">ZStage</class_name>
+      <module_name type="string">storm_control.hal4000.miscControl.zStage</module_name>
+      <configuration>
+	<z_stage_fn type="string">pi_controller.z_stage</z_stage_fn>
+	<large_step type="float">50.0</large_step>
+	<retracted_z type="float">-100.0</retracted_z>
+	<small_step type="float">1.0</small_step>	
+      </configuration>
+    </z_stage>
+    
+ 
+ <!-- original PI E873 serial number: 119006811 -->
+  <!-- PI stage controller. -->
+    <pi_controller>
+      <module_name type="string">storm_control.sc_hardware.physikInstrumente.piE873Module</module_name> <!--tigerModule-->
+      <class_name type="string">PiController</class_name>
+      <configuration>
+        <serialnum type="int">0118048626</serialnum>
+        <devices>
+          <xy_stage>
+            <velocity type="float">10.0</velocity>
+          </xy_stage>
+          <z_stage>
+            <center type="float">0.0</center>
+            <has_center_bar type="boolean">True</has_center_bar>
+            <maximum type="float">1000.0</maximum>
+            <minimum type="float">-1000.0</minimum>
+            <warning_high type="float">900.0</warning_high>
+            <warning_low type="float">-900.0</warning_low>	    
+          </z_stage>
+        </devices>
+      </configuration>
+    </pi_controller>
+
     
     <!-- PI stage 
     <pi_stage>
@@ -244,7 +282,7 @@
     </pi_stage>
     -->
  
-      <!-- Empty stage  -->  
+      <!-- Empty stage 
     <none_stage>
       <module_name type="string">storm_control.sc_hardware.none.noneStageModule</module_name>
       <class_name type="string">NoneStageModule</class_name>
@@ -253,36 +291,7 @@
 	<velocity type="float">100.0</velocity>
       </configuration>
     </none_stage>
-
-  
-   <!-- z-stage control GUI.  -->
-    <zStage>
-      <class_name type="string">ZStage</class_name>
-      <module_name type="string">storm_control.hal4000.miscControl.zStage</module_name>
-      <configuration>
-        <z_stage_fn type="string">pi_Zstage</z_stage_fn>    
-        <retracted_z type="float">0.0</retracted_z> 
-        <large_step type="float">1.0</large_step>          
-        <small_step type="float">0.1</small_step>  
-      </configuration>
-    </zStage>
-
-
-    <!-- PI Zstage     -->
-    <pi_Zstage>
-      <module_name type="string">storm_control.sc_hardware.physikInstrumente.E873Module</module_name>
-      <class_name type="string">E873ZStage</class_name>     
-      <configuration>	
-          <serialnum type="int">0118048626</serialnum>  
-          <com_port type="string">COM12</com_port>
-      </configuration>
-    </pi_Zstage>
-
-         <!-- original serial number: 119006811 -->
-      
-
-    
-
+ -->  
  
       <!-- Illumination (lasers, shutters, etc) control GUI. -->
     <illumination>
@@ -443,18 +452,6 @@
     </mcl_zstage>
     
 
-    <!-- Progression control GUI -->
-    <progressions>
-      <module_name type="string">storm_control.hal4000.progressions.progressions</module_name>
-      <class_name type="string">Progressions</class_name>
-      <configuration>
-	<illumination_functionality type="string">illumination</illumination_functionality>
-
-	<frames type="int">100</frames>
-	<increment type="float">0.01</increment>
-	<starting_value type="float">0.1</starting_value>
-      </configuration>
-    </progressions>
 
     <!-- sCMOS calibration module -->
     <scmos_cal>
@@ -462,16 +459,6 @@
       <class_name type="string">SCMOSCalibration</class_name>
     </scmos_cal>
         
-    <!-- Spot counter and GUI -->
-    <spotcounter>
-      <module_name type="string">storm_control.hal4000.spotCounter.spotCounter</module_name>
-      <class_name type="string">SpotCounter</class_name>	    
-      <configuration>
-	<max_threads type="int">4</max_threads>
-	<max_size type="int">263000</max_size>
-      </configuration>
-    </spotcounter>
-
 
 
     <!-- TCP control -->
