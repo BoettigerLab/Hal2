@@ -15,6 +15,7 @@ import storm_control.hal4000.halLib.halMessage as halMessage
 
 import storm_control.sc_hardware.baseClasses.hardwareModule as hardwareModule
 import storm_control.sc_hardware.baseClasses.lockModule as lockModule
+import storm_control.sc_library.parameters as params
 
 
 class ZStageFunctionality(hardwareModule.HardwareFunctionality, lockModule.ZStageFunctionalityMixin):
@@ -78,9 +79,9 @@ class ZStage(hardwareModule.HardwareModule):
     """
     This is a Z stage under software control.
     """
-    def __init__(self, module_params = None, qt_settings = None, **kwds):
+    def __init__(self, **kwds): #  module_params = None, qt_settings = None,
         super().__init__(**kwds)
-        self.configuration = module_params.get("configuration")
+        # self.configuration = module_params.get("configuration")
         self.z_stage_functionality = None
         self.z_stage = None
                                                             

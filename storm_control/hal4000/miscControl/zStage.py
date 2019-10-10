@@ -4,7 +4,6 @@ The z stage UI.
 
 Hazen Babcock 05/18
 
-updated to convert to goRelativeZ goAbsoluteZ to avoid crosstalk with X,Y commands - ANB 10/19
 """
 import os
 
@@ -71,25 +70,25 @@ class ZStageView(halDialog.HalDialog):
         return self.parameters
 
     def handleDownLButton(self, boolean):
-        self.z_stage_fn.goRelativeZ(-1.0*self.parameters.get("z_large_step"))
+        self.z_stage_fn.goRelative(-1.0*self.parameters.get("z_large_step"))
 
     def handleDownSButton(self, boolean):
-        self.z_stage_fn.goRelativeZ(-1.0*self.parameters.get("z_small_step"))
+        self.z_stage_fn.goRelative(-1.0*self.parameters.get("z_small_step"))
 
     def handleGoButton(self, boolean):
-        self.z_stage_fn.goAbsoluteZ(self.ui.goSpinBox.value())
+        self.z_stage_fn.goAbsolute(self.ui.goSpinBox.value())
         
     def handleHomeButton(self, boolean):
-        self.z_stage_fn.goAbsoluteZ(0.0)
+        self.z_stage_fn.goAbsolute(0.0)
 
     def handleRetractButton(self, boolean):
-        self.z_stage_fn.goAbsoluteZ(self.retracted_z)
+        self.z_stage_fn.goAbsolute(self.retracted_z)
 
     def handleUpLButton(self, boolean):
-        self.z_stage_fn.goRelativeZ(self.parameters.get("z_large_step"))
+        self.z_stage_fn.goRelative(self.parameters.get("z_large_step"))
 
     def handleUpSButton(self, boolean):
-        self.z_stage_fn.goRelativeZ(self.parameters.get("z_small_step"))        
+        self.z_stage_fn.goRelative(self.parameters.get("z_small_step"))        
 
     def handleZeroButton(self, boolean):
         self.z_stage_fn.zeroZ()

@@ -224,13 +224,64 @@
       </configuration>
     </focuslock>
  
-   <!-- z-stage control GUI. -->
+     <!-- Stage control GUI -->
+    <stage>
+      <module_name type="string">storm_control.hal4000.stage.stage</module_name>
+      <class_name type="string">Stage</class_name>	    
+      <configuration>
+	<stage_functionality type="string">none_stage</stage_functionality>  <!--none_stage  pi_stage-->
+      </configuration>
+    </stage>
+    
+    <!-- PI stage 
+    <pi_stage>
+      <module_name type="string">storm_control.sc_hardware.physikInstrumente.E873Module</module_name>
+      <class_name type="string">E873StageXY</class_name>     
+      <configuration>	
+          <com_port type="string">COM12</com_port>
+          <serialnum type="int">0118048626</serialnum>  
+      </configuration>
+    </pi_stage>
+    -->
+ 
+      <!-- Empty stage  -->  
+    <none_stage>
+      <module_name type="string">storm_control.sc_hardware.none.noneStageModule</module_name>
+      <class_name type="string">NoneStageModule</class_name>
+
+      <configuration>
+	<velocity type="float">100.0</velocity>
+      </configuration>
+    </none_stage>
+
+  
+   <!-- z-stage control GUI.  -->
     <zStage>
       <class_name type="string">ZStage</class_name>
       <module_name type="string">storm_control.hal4000.miscControl.zStage</module_name>
       <configuration>
+        <z_stage_fn type="string">pi_Zstage</z_stage_fn>    
+        <retracted_z type="float">0.0</retracted_z> 
+        <large_step type="float">1.0</large_step>          
+        <small_step type="float">0.1</small_step>  
       </configuration>
-    <zStage>
+    </zStage>
+
+
+    <!-- PI Zstage     -->
+    <pi_Zstage>
+      <module_name type="string">storm_control.sc_hardware.physikInstrumente.E873Module</module_name>
+      <class_name type="string">E873ZStage</class_name>     
+      <configuration>	
+          <serialnum type="int">0118048626</serialnum>  
+          <com_port type="string">COM12</com_port>
+      </configuration>
+    </pi_Zstage>
+
+         <!-- original serial number: 119006811 -->
+      
+
+    
 
  
       <!-- Illumination (lasers, shutters, etc) control GUI. -->
@@ -369,35 +420,14 @@
     </ldc_irlaser>
     -->
     
-    <!-- PI stage -->
-    <pi_stage>
-      <module_name type="string">storm_control.sc_hardware.physikInstrumente.E873Module</module_name>
-      <class_name type="string">E873Stage</class_name>
-      
-      <configuration>	
-          <com_port type="string">COM12</com_port>
-          <serialnum type="int">0118048626</serialnum>  
-      </configuration>
-    </pi_stage>
-     
-      <!-- original serial number: 119006811 -->
-      
-     <!-- Empty stage
-    <none_stage>
-      <module_name type="string">storm_control.sc_hardware.none.noneStageModule</module_name>
-      <class_name type="string">NoneStageModule</class_name>
 
-      <configuration>
-	<velocity type="float">100.0</velocity>
-      </configuration>
-    </none_stage>
-     -->  
+     
+ 
 
     <!-- Mad City Labs Z piezo -->
     <mcl_zstage>
       <module_name type="string">storm_control.sc_hardware.madCityLabs.mclVoltageZModule</module_name>
-      <class_name type="string">MCLVoltageZ</class_name>
-    
+      <class_name type="string">MCLVoltageZ</class_name> 
       <configuration>
         <parameters>
           <center type="float">50.0</center>
@@ -442,14 +472,7 @@
       </configuration>
     </spotcounter>
 
-    <!-- Stage control GUI -->
-    <stage>
-      <module_name type="string">storm_control.hal4000.stage.stage</module_name>
-      <class_name type="string">Stage</class_name>	    
-      <configuration>
-	<stage_functionality type="string">pi_stage</stage_functionality>  <!--none_stage  pi_stage-->
-      </configuration>
-    </stage>
+
 
     <!-- TCP control -->
     <tcp_control>

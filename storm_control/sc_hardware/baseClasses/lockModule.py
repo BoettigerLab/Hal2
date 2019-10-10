@@ -7,7 +7,6 @@ Hazen 04/17
 
 import storm_control.sc_hardware.baseClasses.hardwareModule as hardwareModule
 
-
 class LockFunctionalityMixin(object):
     """
     Combine this with either a HardwareFunctionality or a
