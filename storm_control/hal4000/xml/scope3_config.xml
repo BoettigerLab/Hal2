@@ -200,30 +200,7 @@
     </daq>
 
 
-     
-<!-- Focus lock control GUI. 
-    <focuslock>
-      <class_name type="string">FocusLock</class_name>
-      <module_name type="string">storm_control.hal4000.focusLock.focusLock</module_name>
-      <configuration>
-	<ir_laser type="string">none_irlaser</ir_laser>
-	<ir_power type="int">10</ir_power>
-	<lock_modes type="string">NoLockMode,AutoLockMode,AlwaysOnLockMode,OptimalLockMode,CalibrationLockMode,DiagnosticsLockMode</lock_modes>
-	<qpd type="string">uc480_camera</qpd>
-	<z_stage type="string">mcl_zstage</z_stage>
-	<parameters>
-	  <find_sum>
-	    <step_size type="float">1.0</step_size>
-	  </find_sum>
-	  <locked>
-	    <buffer_length type="int">5</buffer_length>
-	    <offset_threshold type="float">20.0</offset_threshold>
-	  </locked>
-	  <jump_size type="float">0.1</jump_size>
-	</parameters>
-      </configuration>
-    </focuslock>
-     -->
+
    <!-- Focus lock control GUI. -->
     <focuslock>
       <class_name type="string">FocusLock</class_name>
@@ -253,13 +230,16 @@
 
  
       <!-- Illumination (lasers, shutters, etc) control GUI. -->
+       <!-- Note: The name of the channel is the gui_name.
+             XML tags cannot start with numbers. -->
+            
+   <!--     -->
     <illumination>
       <class_name type="string">Illumination</class_name>
       <module_name type="string">storm_control.hal4000.illumination.illumination</module_name>
+       
       <configuration>
-
-        <!-- Note: The name of the channel is the gui_name.
-             XML tags cannot start with numbers. -->
+       
         <ch1>
           <gui_name type="string">750</gui_name>
           <color type="string">140,0,0</color>
@@ -310,10 +290,11 @@
             <hw_fn_name type="string">daq.ilm405.do_task</hw_fn_name>
           </digital_modulation>
         </ch5>
-      </configuration>
+      </configuration> 
     </illumination>
+   
 
-    <!-- Lumencor 405 laser control. -->
+    <!-- Lumencor laser control. -->
     <Lumencor405>
       <module_name type="string">storm_control.sc_hardware.lumencor.LumencorModule</module_name>
       <class_name type="string">Celesta</class_name>
@@ -395,8 +376,8 @@
       <configuration>	
         <port type="string">COM11</port>
         <baudrate type="int">57600</baudrate>
-        <velocity type="float">50.0</velocity>
-      </configuration>
+        <velocity type="float">10.0</velocity> <!-- drop this -->
+      </configuration> 
     </clemex_stage>   
     
     <!-- PI stage
@@ -454,24 +435,7 @@
     </mcl_zstage>
     
     
-      <!-- Mad City Labs Z piezo (USB?) from STORM3 
-    <mcl_zstage>
-      <module_name type="string">storm_control.sc_hardware.madCityLabs.mclModule</module_name>
-      <class_name type="string">MCLZStage</class_name>
-      <configuration>
-	<parameters>
-	  <center type="float">50.0</center>
-	  <has_center_bar type="boolean">True</has_center_bar>
-	  <maximum type="float">100.0</maximum>
-	  <minimum type="float">0.0</minimum>
-	  <warning_high type="float">90.0</warning_high>
-	  <warning_low type="float">10.0</warning_low>
-	</parameters>
-        <mcl_lib type="string">C:/Program Files/Mad City Labs/NanoDrive/Madlib</mcl_lib>
-      </configuration>
-    </mcl_zstage>
-    -->
-
+ 
     <!-- Progression control GUI -->
     <progressions>
       <module_name type="string">storm_control.hal4000.progressions.progressions</module_name>
@@ -506,7 +470,8 @@
       <module_name type="string">storm_control.hal4000.stage.stage</module_name>
       <class_name type="string">Stage</class_name>	    
       <configuration>
-	<stage_functionality type="string">clemex_stage</stage_functionality>  <!-- pi_stage -->
+        <stage_functionality type="string">clemex_stage</stage_functionality> 
+        <velocity type="float">10.0</velocity>
       </configuration>
     </stage>
 
@@ -540,7 +505,7 @@
         <ini_file type="string">uc480_settings.ini</ini_file>
         <offset_file type="string">C:/Users/Scope3/Desktop/MicroscopeSoftware/Hal2/storm_control/hal4000/camoffsets_scope3.txt</offset_file>
         <pixel_clock type="int">25</pixel_clock>
-        <sigma type="float">9</sigma>
+        <sigma type="float">15</sigma>
         <uc480_dll type="string">c:/windows/system32/uc480_64.dll</uc480_dll>
         <use_storm_analysis type="boolean">False</use_storm_analysis>
         <x_width type="int">700</x_width>

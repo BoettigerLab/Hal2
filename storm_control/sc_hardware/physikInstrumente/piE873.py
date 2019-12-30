@@ -10,21 +10,21 @@ Alistair Boettiger, April 2019
 
 V1.1
 Functional connection to x-y axes of PI piezo stage
+V1.2
+Functional connection to both xy axes as a stage and z-axis as a separate z-stage
 
-To do:
-1. Calibrate stage step sizes
-2. Provide instructions for installing the PIPython packages
-3. Fix the python path stupidity
-4. Pass serial numbers as a parameter from  the xml file [DONE]
+Notes: 
+This module requires the PIPython library that ships with the PI controllers.
+It also requires the path to this library to be added to the python path (see below).
+There is probably a more elegant way to do this. 
 """
 
 
 from __future__ import print_function
 
-# Because Python paths never work correctly for me because of stupidity, we are stuck with ugly hacks: 
+# Update the path to the PIPython Library: 
 import sys
 sys.path.append(r'C:\Users\Scope3\Desktop\MicroscopeHardware\PI\PIPython-1.5.1.7 for E-873.3QTU\PIPython-1.5.1.7')
-# end ugly hack
 
 from copy import deepcopy
 

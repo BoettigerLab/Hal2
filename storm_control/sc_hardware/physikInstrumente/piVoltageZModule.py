@@ -12,9 +12,9 @@ from PyQt5 import QtCore
 import storm_control.sc_hardware.baseClasses.voltageZModule as voltageZModule
 
 
-class LudlVoltageZ(voltageZModule.VoltageZ):
+class PiVoltageZ(voltageZModule.VoltageZ):
     """
-    This is a Mad City Labs stage in analog control mode.
+    This is a taken from the Mad City Labs stage in analog control mode.
     """
     def __init__(self, module_params = None, qt_settings = None, **kwds):
         super().__init__(module_params, qt_settings, **kwds)

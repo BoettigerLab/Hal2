@@ -82,7 +82,8 @@ class MarzhauserRS232(RS232.RS232):
             self.writeline("!joy 0")
 
     def position(self):
-        self.writeline("?pos")
+        self.writeline("?pos") 
+
 
     def serialNumber(self):
         """

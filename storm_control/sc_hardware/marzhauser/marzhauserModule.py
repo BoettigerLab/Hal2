@@ -38,7 +38,7 @@ class MarzhauserStageFunctionality(stageModule.StageFunctionality):
         # the stage to the commands we're sending.
         self.polling_thread = MarzhauserPollingThread(device_mutex = self.device_mutex,
                                                       is_moving_signal = self.isMoving,
-                                                      sleep_time = 100,
+                                                      sleep_time = 500,  # changed from 100 to debug marzhauser stage freeze 10-2019
                                                       stage = self.stage,
                                                       stage_position_signal = self.stagePosition)
         self.polling_thread.startPolling()

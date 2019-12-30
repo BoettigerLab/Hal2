@@ -247,13 +247,13 @@
     </z_stage>
     
  
- <!-- original PI E873 serial number: 119006811 -->
+ <!-- original PI E873 serial number: 119006811. Demo unit SN: 0118048626 -->
   <!-- PI stage controller. -->
     <pi_controller>
       <module_name type="string">storm_control.sc_hardware.physikInstrumente.piE873Module</module_name> <!--tigerModule-->
       <class_name type="string">PiController</class_name>
       <configuration>
-        <serialnum type="int">0118048626</serialnum>
+        <serialnum type="int">119006811</serialnum>
         <devices>
           <xy_stage>
             <velocity type="float">10.0</velocity>
@@ -489,14 +489,14 @@
         <background type="int">100000</background>
         <camera_id type="int">1</camera_id>
         <ini_file type="string">uc480_settings.ini</ini_file>
-        <offset_file type="string">C:/Users/Scope3/Desktop/MicroscopeSoftware/Hal2/storm_control/hal4000/camoffsets_scope3.txt</offset_file>
+        <offset_file type="string">C:/Users/Scope3/Desktop/MicroscopeSoftware/Hal2/storm_control/hal4000/camoffsets_scope4.txt</offset_file>
         <pixel_clock type="int">25</pixel_clock>
         <sigma type="float">3.5</sigma>
         <uc480_dll type="string">c:/windows/system32/uc480_64.dll</uc480_dll>
         <use_storm_analysis type="boolean">False</use_storm_analysis>
         <x_width type="int">500</x_width>
-        <y_width type="int">100</y_width>
-        <units_to_microns type="float">0.264</units_to_microns>
+        <y_width type="int">200</y_width>
+        <units_to_microns type="float">-0.05</units_to_microns>
       </configuration>
     </uc480_camera>
     

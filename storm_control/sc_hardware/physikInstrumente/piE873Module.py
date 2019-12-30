@@ -2,6 +2,10 @@
 """
 HAL module for controlling a Pi controller.
 Adapted from Hal module for a tiger controller by Hazen 05/18.
+
+This module connects to a PI controller (model E873) which controls 3
+translation stages (model Q545.140) that are assembled in a 3D stage configuration
+
 Alistair 10/19
 """
 import math
