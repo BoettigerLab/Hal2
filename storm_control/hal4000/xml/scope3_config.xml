@@ -376,7 +376,7 @@
       <configuration>	
         <port type="string">COM11</port>
         <baudrate type="int">57600</baudrate>
-        <velocity type="float">10.0</velocity> <!-- drop this -->
+        <velocity type="float">100.0</velocity> <!-- drop this -->
       </configuration> 
     </clemex_stage>   
     
@@ -430,7 +430,7 @@
           <warning_low type="float">20.0</warning_low>
         </parameters>
         <ao_fn_name type="string">daq.mcl.ao_task</ao_fn_name>
-        <microns_to_volts type="float">0.1</microns_to_volts>
+        <microns_to_volts type="float">0.05</microns_to_volts>  <!-- updated following hbaic_pgrey_2cam -->
       </configuration>
     </mcl_zstage>
     

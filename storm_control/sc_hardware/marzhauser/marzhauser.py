@@ -4,6 +4,7 @@ RS232 interface to a Marzhauser stage.
 
 Hazen 04/17
 
+2019 - Alistair
 Added back Tango controller
 
 """
@@ -109,7 +110,7 @@ class MarzhauserTango():
     #
     def __init__(self, port):
         self.wait = 1 # move commands wait for motion to stop
-        self.unit_to_um = 1000.0
+        self.unit_to_um = 1000  # 10000
         self.um_to_unit = 1.0/self.unit_to_um
 
 
@@ -120,14 +121,6 @@ class MarzhauserTango():
         global instantiated
         assert instantiated == 0, "Attempt to instantiate two Marzhauser stage classes."
         instantiated = 1
-
-        ## loadTangoDLL
-        #
-        # Load the Tango DLL. Some Marzhauser stages use this DLL instead of
-        # RS-232 based communication.
-        #
-        # dllname = r'D:\Software\API & DLL\DLL Files\TangoDLL_64bit_V1396\Tango_DLL.dll
-        # tango = windll.LoadLibrary(dllname)
 
         # Connect to the stage.
         self.good = 1
@@ -225,8 +218,10 @@ class MarzhauserTango():
             return [pdX.value * self.unit_to_um, 
                     pdY.value * self.unit_to_um,
                     pdZ.value * self.unit_to_um]
+            print('position')
         else:
             return [0.0, 0.0, 0.0]
+
 
     ## serialNumber
     #
