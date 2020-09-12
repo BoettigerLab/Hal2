@@ -74,12 +74,12 @@
 
       <!-- List objectives available on this setup here. -->
       <parameters>
-	<flip_horizontal desc="Flip image horizontal (mosaic)" type="boolean">True</flip_horizontal>
-	<flip_vertical desc="Flip image vertical (mosaic)" type="boolean">False</flip_vertical>
+	<flip_horizontal desc="Flip image horizontal (mosaic)" type="boolean">False</flip_horizontal>
+	<flip_vertical desc="Flip image vertical (mosaic)" type="boolean">True</flip_vertical>
 	<transpose desc="Transpose image (mosaic)" type="boolean">True</transpose>
 
 	<objective desc="Current objective" type="string" values="obj1,obj2">obj1</objective>
-	<obj1 desc="Objective 1" type="custom">60x,0.1,0.0,0.0</obj1>
+	<obj1 desc="Objective 1" type="custom">60x,0.114,0.0,0.0</obj1>  <!-- 0.1 -->
 	<obj2 desc="Objective 2" type="custom">10x,1.60,0.0,0.0</obj2>
       </parameters>
     </mosaic>
@@ -126,8 +126,8 @@
           <!-- These are the display defaults, not the camera range. -->
           <default_max type="int">2000</default_max> 
           <default_min type="int">100</default_min>
-          <flip_horizontal type="boolean">True</flip_horizontal>
-          <flip_vertical type="boolean">False</flip_vertical>
+          <flip_horizontal type="boolean">False</flip_horizontal>
+          <flip_vertical type="boolean">True</flip_vertical>
           <transpose type="boolean">True</transpose>
 
           <!-- This is the extension to use (if any) when saving data from this camera. -->
@@ -418,7 +418,7 @@
 
     <!-- Mad City Labs Z piezo -->
     <mcl_zstage>
-      <module_name type="string">storm_control.sc_hardware.madCityLabs.mclVoltageZModule</module_name>
+      <module_name type="string">storm_control.sc_hardware.madCityLabs.mclVoltageZModule</module_name>     
       <class_name type="string">MCLVoltageZ</class_name>
       <configuration>
         <parameters>
@@ -508,7 +508,7 @@
         <sigma type="float">15</sigma>
         <uc480_dll type="string">c:/windows/system32/uc480_64.dll</uc480_dll>
         <use_storm_analysis type="boolean">False</use_storm_analysis>
-        <x_width type="int">700</x_width>
+        <x_width type="int">500</x_width>
         <y_width type="int">200</y_width>
         <units_to_microns type="float">-0.005</units_to_microns>
       </configuration>

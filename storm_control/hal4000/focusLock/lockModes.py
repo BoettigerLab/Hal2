@@ -950,6 +950,123 @@ class CalibrationLockMode(JumpLockMode):
         LockMode.z_stage_functionality.recenter()        
 
 
+
+# added SoftZScanLockMode
+# 1/3/2020 for use without hardware timing
+
+class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
+    """
+    Locked when not filming. 
+    No lock, the stage is driven through a pre-determined set of 
+    z positions then resumes the lock. 
+    """
+    def __init__(self, parameters = None, **kwds):
+        kwds["parameters"] = parameters    
+        super().__init__(**kwds)
+        self.clm_counter = 0
+        self.clm_max_zvals = 0
+        self.clm_pname = "calibrate"
+        self.clm_zvals = []
+        self.name = "Calibrate"
+        self.first_move = True
+
+        # Add calibration specific parameters.
+        p = self.parameters.addSubSection(self.clm_pname)
+        p.add(params.ParameterRangeInt(description = "Frames to pause between steps.",
+                                       name = "frames_to_pause",
+                                       value = 2,
+                                       min_value = 1,
+                                       max_value = 100))        
+        p.add(params.ParameterRangeInt(description = "Frames before to pause at start.",
+                                       name = "deadtime",
+                                       value = 20,
+                                       min_value = 1,
+                                       max_value = 100))
+        p.add(params.ParameterRangeFloat(description = "Distance +- z to move in nanometers.",
+                                         name = "range",
+                                         value = 600,
+                                         min_value = 100,
+                                         max_value = 5000))
+        p.add(params.ParameterRangeFloat(description = "Step size in z in nanometers.",
+                                         name = "step_size",
+                                         value = 10,
+                                         min_value = 1,
+                                         max_value = 100))
+
+    def scanSetup(self, z_center, deadtime, zrange, step_size, frames_to_pause):
+        """
+        Configure the variables that will be used to execute the z scan.
+        zrange is in nm 
+        """
+        def addZval(z_val):
+            self.clm_zvals.append(z_val)
+            self.clm_max_zvals += 1
+
+        self.clm_zvals = []
+        self.clm_max_zvals = 0
+        
+        # Convert to um.
+        zrange = 0.001 * zrange
+        step_size = 0.001 * step_size
+
+        # Turn off lock
+        if self.locked and self.first_move:
+            self.stopLock()
+            self.first_move = False
+
+        # Initial hold.
+        for i in range(deadtime-1):
+            addZval(z_center)
+
+        # Staircase scan.       
+        addZval(-zrange)
+        z = z_center - zrange
+        stop = z_center + zrange - 0.5 * step_size
+        while (z < stop):
+            for i in range(frames_to_pause-1):
+                addZval(0.0)
+            addZval(step_size)
+            z += step_size
+
+        addZval(-zrange)
+
+        # Final hold.
+        for i in range(deadtime-1):
+            addZval(z_center)
+            
+        # start lock
+        self.first_move = True
+        self.startLock()
+        
+
+    def handleNewFrame(self, frame):
+        """
+        Handles a new frame from the camera. This moves to a new 
+        z position if the scan has not been completed.
+        """
+        if (self.clm_counter < self.clm_max_zvals):
+            LockMode.z_stage_functionality.goRelative(self.clm_zvals[self.clm_counter])
+            self.clm_counter += 1
+
+    def newParameters(self, parameters):
+        if hasattr(super(), "newParameters"):
+            super().newParameters(parameters)
+        p = parameters.get(self.clm_pname)
+        self.scanSetup(0.0, 
+                      p.get("deadtime"), 
+                      p.get("range"), 
+                      p.get("step_size"), 
+                      p.get("frames_to_pause"))
+
+    def startFilm(self):
+        self.clm_counter = 0
+
+    def stopFilm(self):
+        LockMode.z_stage_functionality.recenter()        
+
+
+
+
 class HardwareZScanLockMode(AlwaysOnLockMode):
     """
     This holds a focus target. Then during filming it does a hardware
