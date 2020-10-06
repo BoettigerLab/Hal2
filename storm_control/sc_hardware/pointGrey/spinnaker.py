@@ -8,6 +8,11 @@ Note: As currently written this is designed to work with 12 bit cameras. See
       onImageEvent() in SpinImageEventHandler class.
 
 Hazen 01/19
+
+Updated 09/20 -- FLIR seems to have changed PySpin.ImageEvent to PySpin.ImageEventHandler 
+   and changed RegisterEvent to RegisterEventHandler()? 
+   see 'was' annotations
+
 """
 
 import numpy
@@ -189,7 +194,7 @@ class SpinCamera(object):
 
         # Register for image events.
         self.image_event_handler = SpinImageEventHandler(frame_buffer = self.frames)
-        self.h_camera.RegisterEvent(self.image_event_handler)
+        self.h_camera.RegisterEventHandler(self.image_event_handler)  #  was RegisterEvent
                 
         # Cached properties, these are called 'nodes' in Spinakker.
         self.properties = {}
@@ -312,7 +317,7 @@ class SpinCamera(object):
         self.frames.clear()
 
 
-class SpinImageEventHandler(PySpin.ImageEvent):
+class SpinImageEventHandler(PySpin.ImageEventHandler):  # was PySpin.ImageEvent
     """
     This handles a new image from the camera. It converts it to a SCamData
     object and adds the object to the cameras list of frames.

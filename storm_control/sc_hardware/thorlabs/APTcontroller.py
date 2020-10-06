@@ -11,10 +11,10 @@ Alistair Boettiger, September 2020
 V1.1
 Adapted from my PI E873 library
 
-Notes: 
-This module requires the PIPython library that ships with the PI controllers.
-It also requires the path to this library to be added to the python path (see below).
-There is probably a more elegant way to do this. 
+Install notes:
+pip install thorlabs-apt   https://pypi.org/project/thorlabs-apt/#description
+Downloaded and install the latest version of thorlabs APT 64 bit software from thorlabs
+https://www.thorlabs.com/software_pages/ViewSoftwarePage.cfm?Code=Motion_Control
 """
 
 
@@ -35,8 +35,8 @@ class APTcontroller():
     def __init__(self, xStageSN = '27003853', yStageSN = '27003868'):   # should become a parameter, see other stages
         print(['Serial numbers x-stage ' ,xStageSN, ' y-stage ',yStageSN])
     
-		self.motorX = apt.Motor(xStageSN)
-		self.motorY = apt.Motor(yStageSN)
+        self.motorX = apt.Motor(xStageSN)
+        self.motorY = apt.Motor(yStageSN)
         
         self.wait = 1 # move commands wait for motion to stop
         self.unit_to_um = 1000.0 # needs calibration.  controller reports in mm 
@@ -63,14 +63,14 @@ class APTcontroller():
         if self.good:
             X = x * self.um_to_unit
             Y = y * self.um_to_unit
-			rangeX = self.motorX.get_stage_axis_info()
-			rangeY = self.motorY.get_stage_axis_info()
+            rangeX = self.motorX.get_stage_axis_info()
+            rangeY = self.motorY.get_stage_axis_info()
             if X > rangeX[0] and X < rangeX[1]:
-				self.motorX.move_to(X)  # self, value, blocking = False)
+                self.motorX.move_to(X)  # self, value, blocking = False)
             else:
                 print('requested move outside max range!')
             if Y > rangeY[0] and Y < rangeY[1]:
-				self.motorY.move_to(Y)
+                self.motorY.move_to(Y)
             else:
                 print('requested move outside max range!')
 
@@ -83,9 +83,9 @@ class APTcontroller():
         if self.good:
             # self.jog(0.0,0.0)
             X =  dx * self.um_to_unit
-			Y =  dy * self.um_to_unit
-			rangeX = self.motorX.get_stage_axis_info()
-			rangeY = self.motorY.get_stage_axis_info()
+            Y =  dy * self.um_to_unit
+            rangeX = self.motorX.get_stage_axis_info()
+            rangeY = self.motorY.get_stage_axis_info()
             if  X > rangeX[0] and X < rangeX[1]:
                 self.motorX.move_by(X)
             else:
@@ -146,15 +146,15 @@ class APTcontroller():
     # Not tested yet. I think this should work if we uncomment the last two lines. 
     #
     def setVelocity(self, x_vel, y_vel):
-	    # get_velocity_parameters(self)  -> (minimum velocity, acceleration, maximum velocity)
-		# set_velocity_parameters(self, min_vel, accn, max_vel):
-		xVelocityPars = self.motorX.get_velocity_parameters()
-		yVelocityPars = self.motorY.get_velocity_parameters()
-		print('current velocity parameters, x-stage, y-stage:')
-		print(xVelocityPars)
-		print(yVelocityPars)
+        # get_velocity_parameters(self)  -> (minimum velocity, acceleration, maximum velocity)
+        # set_velocity_parameters(self, min_vel, accn, max_vel):
+        xVelocityPars = self.motorX.get_velocity_parameters()
+        yVelocityPars = self.motorY.get_velocity_parameters()
+        print('current velocity parameters, x-stage, y-stage:')
+        print(xVelocityPars)
+        print(yVelocityPars)
         # self.motorX(xVelocityPars[0],xVelocityPars[1],x_vel)
-		# self.motorY(yVelocityPars[0],yVelocityPars[1],y_vel)
+        # self.motorY(yVelocityPars[0],yVelocityPars[1],y_vel)
 
     ## shutDown
     #
@@ -162,17 +162,17 @@ class APTcontroller():
     #
     def shutDown(self):
         # Disconnect from the stage
-		pass
-		
-		
+        pass
+        
+        
     ## zero
     # Not tested yet.  I think this should work if we uncomment the last line. 
     # Set the current position as the new zero position.
     #
     def zero(self):
         if self.good:
-			# not sure we need this. Currently, don't reset anything
-			xZero = self.motorX.get_move_home_parameters()[3] # the 4th item is the zero offset
-			yZero = self.motorY.get_move_home_parameters()[4] # the 4th item is the zero offset
-			print([xZero,yZero])
+            # not sure we need this. Currently, don't reset anything
+            xZero = self.motorX.get_move_home_parameters()[3] # the 4th item is the zero offset
+            yZero = self.motorY.get_move_home_parameters()[4] # the 4th item is the zero offset
+            print([xZero,yZero])
             # set_move_home_parameters(self, direction, lim_switch, velocity, zero_offset):

@@ -12,7 +12,7 @@ Not currently working
 from PyQt5 import QtCore
 import storm_control.hal4000.halLib.halMessage as halMessage
 import storm_control.sc_hardware.baseClasses.stageModule as stageModule
-import storm_control.sc_hardware.APTcontroller.APTcontroller as APTcontroller # was marzhauser 
+import storm_control.sc_hardware.thorlabs.APTcontroller as APTcontroller # was marzhauser 
 
 
 class APTcontrollerStageFunctionality(stageModule.StageFunctionalityNF):  # note the "NF" module (no feedback), unlike the Marzhauser

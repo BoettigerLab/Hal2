@@ -154,8 +154,8 @@
 		 rising (True) or falling (False) edge of the camera signal
 	-->
         <timing>
-          <camera_fire_pin type="string">/Dev3/PFI8</camera_fire_pin>
-          <counter type="string">/Dev3/ctr0</counter>
+          <camera_fire_pin type="string">/Dev1/PFI8</camera_fire_pin>
+          <counter type="string">/Dev1/ctr0</counter>
           <rising_edge type="boolean">False</rising_edge>   <!-- falling edge -->
         </timing>
         
@@ -164,37 +164,37 @@
              message and "name" = "daq.xxx.yyy". -->
         <ilm750>
           <do_task>
-            <source type="string">/Dev3/port0/line4</source>
+            <source type="string">/Dev1/port0/line4</source>
           </do_task>
         </ilm750>
 
         <ilm647>
           <do_task>
-            <source type="string">/Dev3/port0/line3</source>
+            <source type="string">/Dev1/port0/line3</source>
           </do_task>      
         </ilm647>
 
         <ilm561>
           <do_task>
-            <source type="string">/Dev3/port0/line2</source>
+            <source type="string">/Dev1/port0/line2</source>
           </do_task>
         </ilm561>
 
         <ilm488>
           <do_task>
-            <source type="string">/Dev3/port0/line1</source>
+            <source type="string">/Dev1/port0/line1</source>
           </do_task>
         </ilm488>
 
         <ilm405>
           <do_task>
-            <source type="string">/Dev3/port0/line0</source>
+            <source type="string">/Dev1/port0/line0</source>
           </do_task>
         </ilm405>   
 
         <mcl>
           <ao_task>
-            <source type="string">/Dev3/ao1</source>
+            <source type="string">/Dev1/ao1</source>
           </ao_task>
         </mcl>        
       </configuration>
@@ -208,9 +208,9 @@
       <configuration>
 	<ir_laser type="string">none_irlaser</ir_laser>
 	<ir_power type="int">10</ir_power>
-	<lock_modes type="string">NoLockMode,AutoLockMode,AlwaysOnLockMode,OptimalLockMode,CalibrationLockMode,DiagnosticsLockMode</lock_modes>
-	<qpd type="string">uc480_camera</qpd>
-	<z_stage type="string">pi_controller.z_stage</z_stage> <!-- pi_controller.z_stage   mcl_zstage -->
+	<lock_modes type="string">ZScanLockMode,HardwareZScanLockMode,NoLockMode,AutoLockMode,AlwaysOnLockMode,OptimalLockMode,CalibrationLockMode,DiagnosticsLockMode</lock_modes>
+	<qpd type="string">none_qpd</qpd> <!-- uc480_camera  -->
+	<z_stage type="string">  mcl_zstage</z_stage> <!-- pi_controller.z_stage   mcl_zstage -->
 	<parameters>
 	  <find_sum>
 	    <step_size type="float">1.0</step_size>
@@ -225,62 +225,54 @@
     </focuslock>
  
  
+   <none_qpd>
+      <module_name type="string">storm_control.sc_hardware.none.noneQPDModule</module_name>
+      <class_name type="string">NoneQPDModule</class_name>
+
+      <configuration>
+	<parameters>
+	  <max_voltage type="float">10.0</max_voltage>
+	  <min_voltage type="float">-10.0</min_voltage>
+	  <offset_has_center_bar type="boolean">True</offset_has_center_bar>
+	  <offset_maximum type="float">0.6</offset_maximum>
+	  <offset_minimum type="float">-0.6</offset_minimum>
+	  <offset_warning_high type="float">0.5</offset_warning_high>
+	  <offset_warning_low type="float">-0.5</offset_warning_low>
+	  <sum_maximum type="float">1000.0</sum_maximum>
+	  <sum_minimum type="float">0.0</sum_minimum>
+	  <sum_warning_low type="float">100.0</sum_warning_low>
+	</parameters>
+	<units_to_microns type="float">1.0</units_to_microns>
+
+	<!-- These are for simulation / testing -->
+	<noise type="float">0.5e-2</noise>
+	<tilt type="float">1.0e-3</tilt>
+	<xy_stage_fn type="string">none_stage</xy_stage_fn>
+	<z_stage_fn type="string">none_zstage</z_stage_fn>
+      </configuration>
+    </none_qpd>
+ 
+     <!-- Thorlabs APT stage -->
+    <apt_stage>
+      <module_name type="string">storm_control.sc_hardware.thorlabs.APTcontrollerModule</module_name>
+      <class_name type="string">APTcontrollerStage</class_name> <!-- MarzhauserStageRS232  MarzhauserStageTango -->
+     
+      <configuration>	
+        <xStageSN type="int">27003853</xStageSN>
+        <yStageSN type="int">27003868</yStageSN> <!-- drop this -->
+      </configuration> 
+    </apt_stage>   
+ 
+ 
    <!-- XY Stage control GUI -->
     <stage>
       <class_name type="string">Stage</class_name>
       <module_name type="string">storm_control.hal4000.stage.stage</module_name>  
       <configuration>
-	<stage_functionality type="string">pi_controller.xy_stage</stage_functionality>   <!--none_stage  pi_stage   pi_controller.xy_stage -->
+	<stage_functionality type="string">apt_stage</stage_functionality>   <!--none_stage    pi_controller.xy_stage pi_stage -->
       </configuration>
     </stage>
  
-    <!-- Z stage control GUI. -->
-    <z_stage>
-      <class_name type="string">ZStage</class_name>
-      <module_name type="string">storm_control.hal4000.miscControl.zStage</module_name>
-      <configuration>
-	<z_stage_fn type="string">pi_controller.z_stage</z_stage_fn>
-	<large_step type="float">50.0</large_step>
-	<retracted_z type="float">-100.0</retracted_z>
-	<small_step type="float">1.0</small_step>	
-      </configuration>
-    </z_stage>
-    
- 
- <!-- original PI E873 serial number: 119006811. Demo unit SN: 0118048626 -->
-  <!-- PI stage controller. -->
-    <pi_controller>
-      <module_name type="string">storm_control.sc_hardware.physikInstrumente.piE873Module</module_name> <!--tigerModule-->
-      <class_name type="string">PiController</class_name>
-      <configuration>
-        <serialnum type="int">119006811</serialnum>
-        <devices>
-          <xy_stage>
-            <velocity type="float">10.0</velocity>
-          </xy_stage>
-          <z_stage>
-            <center type="float">0.0</center>
-            <has_center_bar type="boolean">True</has_center_bar>
-            <maximum type="float">1000.0</maximum>
-            <minimum type="float">-1000.0</minimum>
-            <warning_high type="float">900.0</warning_high>
-            <warning_low type="float">-900.0</warning_low>	    
-          </z_stage>
-        </devices>
-      </configuration>
-    </pi_controller>
-
-    
-    <!-- PI stage 
-    <pi_stage>
-      <module_name type="string">storm_control.sc_hardware.physikInstrumente.E873Module</module_name>
-      <class_name type="string">E873StageXY</class_name>     
-      <configuration>	
-          <com_port type="string">COM12</com_port>
-          <serialnum type="int">0118048626</serialnum>  
-      </configuration>
-    </pi_stage>
-    -->
  
       <!-- Empty stage 
     <none_stage>
@@ -471,7 +463,7 @@
       </configuration>
     </tcp_control>
     
-      <!-- Thorlabs UC480 camera for the focus lock -->
+      <!-- Thorlabs UC480 camera for the focus lock 
     <uc480_camera>
       <class_name type="string">UC480Camera</class_name>
       <module_name type="string">storm_control.sc_hardware.thorlabs.uc480CameraModule</module_name>
@@ -499,7 +491,7 @@
         <units_to_microns type="float">-0.05</units_to_microns>
       </configuration>
     </uc480_camera>
-    
+    -->
   </modules>
   
 </config>
