@@ -1,18 +1,12 @@
 #!/usr/bin/env python
 """
 Interface to Point Grey's PySpin Python module.
-
 Tested with "Spinnaker 1.19 for Python 2 and 3 - Windows (64-bit)".
-
+Updated to handle Spinnaker 2.0
 Note: As currently written this is designed to work with 12 bit cameras. See
       onImageEvent() in SpinImageEventHandler class.
-
 Hazen 01/19
-
-Updated 09/20 -- FLIR seems to have changed PySpin.ImageEvent to PySpin.ImageEventHandler 
-   and changed RegisterEvent to RegisterEventHandler()? 
-   see 'was' annotations
-
+Jeff 08/20
 """
 
 import numpy
@@ -25,6 +19,13 @@ camera_list = None
 n_active_cameras = 0
 system = None
 
+# Capture the PySpin version
+try:
+    SpinImageEventClass = PySpin.ImageEventHandler
+    pyspin_version = 2
+except:
+    SpinImageEventClass = PySpin.ImageEvent
+    pyspin_version = 1
 
 class SpinnakerException(Exception):
     """
@@ -171,11 +172,9 @@ class SCamData(object):
 class SpinCamera(object):
     """
     The interface to a single camera.
-
     Notes: 
     1. This only works with nodes that in the genicam nodemap. It does not
        have access to nodes in the device or tl stream nodemap.
-
     2. It works with the node names, not their display names.
     """
     def __init__(self, h_camera = None, **kwds):
@@ -194,7 +193,10 @@ class SpinCamera(object):
 
         # Register for image events.
         self.image_event_handler = SpinImageEventHandler(frame_buffer = self.frames)
-        self.h_camera.RegisterEventHandler(self.image_event_handler)  #  was RegisterEvent
+        if pyspin_version >=2:
+            self.h_camera.RegisterEventHandler(self.image_event_handler)
+        else:
+            self.h_camera.RegisterEvent(self.image_event_handler)
                 
         # Cached properties, these are called 'nodes' in Spinakker.
         self.properties = {}
@@ -202,7 +204,6 @@ class SpinCamera(object):
     def getFrames(self):
         """
         Get all frames that are currently available. 
-
         The SpinImageEventHandler appends images to self.frames() each time
         there is a new image. Here we make a copy of the current list and
         reset the original.
@@ -295,7 +296,11 @@ class SpinCamera(object):
         """
         Call this only when you are done with this class instance and camera.
         """
-        self.h_camera.UnregisterEvent(self.image_event_handler)
+        if pyspin_version >= 2:
+            self.h_camera.UnregisterEventHandler(self.image_event_handler)
+        else:
+            self.h_camera.UnregisterEvent(self.image_event_handler)
+
         self.h_camera.DeInit()
         self.h_camera = None
 
@@ -317,7 +322,7 @@ class SpinCamera(object):
         self.frames.clear()
 
 
-class SpinImageEventHandler(PySpin.ImageEventHandler):  # was PySpin.ImageEvent
+class SpinImageEventHandler(SpinImageEventClass):
     """
     This handles a new image from the camera. It converts it to a SCamData
     object and adds the object to the cameras list of frames.
@@ -578,7 +583,7 @@ if (__name__ == "__main__"):
         cam.setProperty("TriggerMode", "Off")
         cam.setProperty("PixelFormat", "Mono12p")
         cam.setProperty("AcquisitionFrameRateAuto", "Off")
-        cam.setProperty("AcquisitionFrameRate", 4.0) # was 10
+        cam.setProperty("AcquisitionFrameRate", 10.0)
         #cam.setProperty("ExposureTime", 99000.0)
         #cam.setProperty("BlackLevel", 5.0)
         #cam.setProperty("Gain", 20.0)
