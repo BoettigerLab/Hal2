@@ -963,15 +963,17 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
     def __init__(self, parameters = None, **kwds):
         kwds["parameters"] = parameters    
         super().__init__(**kwds)
-        self.clm_counter = 0
-        self.clm_max_zvals = 0
-        self.clm_pname = "calibrate"
-        self.clm_zvals = []
-        self.name = "Calibrate"
-        self.first_move = True
+        # self.szs  Software Z Scan object  
+        self.szs_counter = 0
+        self.szs_max_zvals = 0
+        self.szs_pname = "software_z_scan"
+        self.szs_zvals = []
+        self.szs_first_move = True
+        self.szs_film_off = False
+        self.name = "Software Z Scan"
 
         # Add calibration specific parameters.
-        p = self.parameters.addSubSection(self.clm_pname)
+        p = self.parameters.addSubSection(self.szs_pname)
         p.add(params.ParameterRangeInt(description = "Frames to pause between steps.",
                                        name = "frames_to_pause",
                                        value = 2,
@@ -979,7 +981,7 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
                                        max_value = 100))        
         p.add(params.ParameterRangeInt(description = "Frames before to pause at start.",
                                        name = "deadtime",
-                                       value = 20,
+                                       value = 10,
                                        min_value = 1,
                                        max_value = 100))
         p.add(params.ParameterRangeFloat(description = "Distance +- z to move in nanometers.",
@@ -989,9 +991,9 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
                                          max_value = 5000))
         p.add(params.ParameterRangeFloat(description = "Step size in z in nanometers.",
                                          name = "step_size",
-                                         value = 10,
+                                         value = 100,
                                          min_value = 1,
-                                         max_value = 100))
+                                         max_value = 10000))
 
     def scanSetup(self, z_center, deadtime, zrange, step_size, frames_to_pause):
         """
@@ -999,20 +1001,20 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
         zrange is in nm 
         """
         def addZval(z_val):
-            self.clm_zvals.append(z_val)
-            self.clm_max_zvals += 1
+            self.szs_zvals.append(z_val)
+            self.szs_max_zvals += 1
 
-        self.clm_zvals = []
-        self.clm_max_zvals = 0
+        self.szs_zvals = []
+        self.szs_max_zvals = 0
         
         # Convert to um.
         zrange = 0.001 * zrange
         step_size = 0.001 * step_size
 
         # Turn off lock
-        if self.locked and self.first_move:
+        if  self.amLocked() and self.szs_first_move:
             self.stopLock()
-            self.first_move = False
+            self.szs_first_move = False
 
         # Initial hold.
         for i in range(deadtime-1):
@@ -1027,7 +1029,6 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
                 addZval(0.0)
             addZval(step_size)
             z += step_size
-
         addZval(-zrange)
 
         # Final hold.
@@ -1035,34 +1036,43 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
             addZval(z_center)
             
         # start lock
-        self.first_move = True
-        self.startLock()
+        self.szs_first_move = True
+        # self.startLock()
         
-
     def handleNewFrame(self, frame):
         """
         Handles a new frame from the camera. This moves to a new 
         z position if the scan has not been completed.
         """
-        if (self.clm_counter < self.clm_max_zvals):
-            LockMode.z_stage_functionality.goRelative(self.clm_zvals[self.clm_counter])
-            self.clm_counter += 1
+        if (self.szs_counter < self.szs_max_zvals):
+            LockMode.z_stage_functionality.goRelative(self.szs_zvals[self.szs_counter])
+            self.szs_counter += 1
 
     def newParameters(self, parameters):
         if hasattr(super(), "newParameters"):
             super().newParameters(parameters)
-        p = parameters.get(self.clm_pname)
+        p = parameters.get(self.szs_pname)
         self.scanSetup(0.0, 
                       p.get("deadtime"), 
                       p.get("range"), 
                       p.get("step_size"), 
                       p.get("frames_to_pause"))
-
+                  
+    def shouldEnableLockButton(self):
+        return True
+        
     def startFilm(self):
-        self.clm_counter = 0
+        self.szs_counter = 0
+        if self.amLocked() and self.szs_zvals is not None:
+            self.behavior = "none"
+            self.szs_film_off = True
 
     def stopFilm(self):
-        LockMode.z_stage_functionality.recenter()        
+        if self.szs_film_off:
+            self.szs_film_off = False
+            self.behavior = "locked"
+            self.startLock()
+            # LockMode.z_stage_functionality.recenter()        
 
 
 
@@ -1098,6 +1108,18 @@ class HardwareZScanLockMode(AlwaysOnLockMode):
         """
         if self.amLocked() and isinstance(self.hzs_zvals, numpy.ndarray):
             waveform = self.hzs_zvals + LockMode.z_stage_functionality.getCurrentPosition()
+            # print(waveform)
+            minZ = 0
+            maxZ = 200 # should be importanted from parameters 
+            outOfRange = any(waveform<minZ) or any(waveform>maxZ)
+            if outOfRange:
+                print('requested waveform out of range, recomputing')
+                lenWave = waveform.size
+                waveform = numpy.linspace(maxZ/2-10,maxZ/2+10,lenWave)
+                # time.sleep(1)
+                # waveform = self.hzs_zvals + LockMode.z_stage_functionality.getCurrentPosition()
+                # print('new waveform:')
+                # print(waveform)
             return LockMode.z_stage_functionality.getDaqWaveform(waveform)
 
     def setZStageFunctionality(self, z_stage_functionality):
