@@ -17,6 +17,8 @@ import socket
 import subprocess
 import telnetlib
 import time
+import sys
+
 
 aotf = None
 response_time = 0.05
@@ -49,15 +51,19 @@ class AOTF(object):
             self.live = False
         else:
             # Load the AOTF driver library library.
+            print("searching for AOTF library")
+            print("AOTF python ")
+            print(sys.version)
             global aotf
             if os.path.exists('C:\Program Files\Crystal Technology\AOTF Utilities\AotfLibrary\LegacyAotfLibrary\DLL\AotfLibrary.dll'):
                 aotf = ctypes.cdll.LoadLibrary('C:\Program Files\Crystal Technology\AOTF Utilities\AotfLibrary\LegacyAotfLibrary\DLL\AotfLibrary')
             elif os.path.exists('C:\Program Files\Crystal Technology\Developer\AotfLibrary\DLL\AotfLibrary.dll'):
                 aotf = ctypes.cdll.LoadLibrary('C:\Program Files\Crystal Technology\Developer\AotfLibrary\DLL\AotfLibrary')
             elif os.path.exists('C:\MicroscopeHardware\Crystal Technology\Developer\AotfLibrary\Dll\AotfLibrary.dll'):
-                aotf = ctypes.cdll.LoadLibrary('C:\MicroscopeHardware\Crystal Technology\Developer\AotfLibrary\Dll\AotfLibrary.dll')
+                aotf = ctypes.cdll.LoadLibrary('C:\MicroscopeHardware\Crystal Technology\Developer\AotfLibrary\Dll\AotfLibrary')
             else:
-                print("Failed to load AotfLibrary.dll")
+                print("Failed to find AotfLibrary.dll")
+           
 
             if self._aotfOpen():
                 self.live = True

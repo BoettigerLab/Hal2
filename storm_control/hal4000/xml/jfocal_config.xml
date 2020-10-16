@@ -416,8 +416,7 @@
     <!-- W1 spinning disk. -->
     <spinning_disk>
       <module_name type="string">storm_control.sc_hardware.andor.w1SpinDiskModule</module_name>
-      <class_name type="string">W1SpinDiskModule</class_name>
-    
+      <class_name type="string">W1SpinDiskModule</class_name>  
       <configuration>
 		<baudrate type="int">115200</baudrate>
 		<port type="string">COM6</port>

@@ -1,1 +1,1 @@
-activate Hal2 && python dave.py
+activate Hal3 && python dave.py
