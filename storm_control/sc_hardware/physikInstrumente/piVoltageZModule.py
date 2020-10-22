@@ -22,8 +22,8 @@ class PiVoltageZ(voltageZModule.VoltageZ):
     def handleResponse(self, message, response):
         if message.isType("get functionality"):
             self.z_stage_functionality = voltageZModule.VoltageZFunctionality(
-                  ao_fn = response.getData()["functionality"],
-                  parameters = self.configuration.get("parameters"),
-                  microns_to_volts = self.configuration.get("microns_to_volts"),
-                  invert_signal = True)
+                ao_fn = response.getData()["functionality"],
+                parameters = self.configuration.get("parameters"),
+                microns_to_volts = self.configuration.get("microns_to_volts"),
+                invert_signal = True)
 

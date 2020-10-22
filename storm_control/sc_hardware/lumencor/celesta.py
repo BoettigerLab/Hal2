@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 """
 Generic Lumencor laser control via HTTP (ethernet connection).
 
@@ -110,6 +110,7 @@ class LumencorLaser(object):
         Turn the laser on/off.
         """
         if on:
+            lumencor_httpcommand(command = 'WAKEUP',ip=self.ip)
             self.message = lumencor_httpcommand(command = 'SET CH '+self.laser_id+' 1', ip=self.ip)
             self.on = True
         else:
@@ -123,6 +124,7 @@ class LumencorLaser(object):
         print("Setting Power", power_in_mw, self.message)
         if power_in_mw > self.pmax:
             power_in_mw = self.pmax
+        lumencor_httpcommand(command = 'WAKEUP',ip=self.ip)
         self.message = lumencor_httpcommand(command ='SET CHINT '+self.laser_id+' '+ str(int(power_in_mw)), ip=self.ip)
         if self.message['message'][0]=='A':
             return True
@@ -152,7 +154,7 @@ if (__name__ == "__main__"):
         print(obj.getLaserOnOff())
         obj.setLaserOnOff(True)
         obj.setPower(20.0)
-        time.sleep(0.1)
+        time.sleep(5)
         obj.shutDown()
 
 #
@@ -178,4 +180,3 @@ if (__name__ == "__main__"):
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-

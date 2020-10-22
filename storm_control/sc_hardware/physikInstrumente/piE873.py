@@ -23,6 +23,10 @@ There is probably a more elegant way to do this.
 from __future__ import print_function
 
 # Update the path to the PIPython Library: 
+#
+# Note: This might be better done by creating a xyz.pth module in the Python
+#       library folder?
+# 
 import sys
 sys.path.append(r'C:\Users\Scope3\Desktop\MicroscopeHardware\PI\PIPython-1.5.1.7 for E-873.3QTU\PIPython-1.5.1.7')
 
@@ -38,7 +42,7 @@ REFMODES = 'FRF' # ['FNL', 'FRF']
 
 
 
-class piE873():
+class piE873(object):
 
     ## __init__
     #
@@ -241,3 +245,4 @@ class piE873():
     def zero(self):
         if self.good:
             pitools._ref_with_pos(self, self.pidevice.axes([0,1])) # added axes [0,1], not sure this ever worked anyway
+
