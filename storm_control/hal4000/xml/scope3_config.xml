@@ -122,13 +122,12 @@
         <parameters>
           <!-- Which camera to use -->
           <camera_id type="int">0</camera_id>
-
           <!-- These are the display defaults, not the camera range. -->
           <default_max type="int">2000</default_max> 
           <default_min type="int">100</default_min>
           <flip_horizontal type="boolean">False</flip_horizontal>
           <flip_vertical type="boolean">True</flip_vertical>
-          <transpose type="boolean">True</transpose>
+          <transpose type="boolean">True</transpose>         
 
           <!-- This is the extension to use (if any) when saving data from this camera. -->
           <extension type="string"></extension>
