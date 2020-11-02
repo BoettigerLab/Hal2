@@ -95,6 +95,7 @@ class AOTF64BitModule(AOTFModule):
                                 
     def __init__(self, module_params = None, **kwds):
         kwds["module_params"] = module_params
+        print("connecting to AOTF")
         self.aotf = AOTF.AOTF64Bit(python32_exe = module_params.get("configuration").get("python32_exe"))
         if not self.aotf.getStatus():
             self.aotf = None

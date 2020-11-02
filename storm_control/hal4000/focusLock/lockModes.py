@@ -1136,7 +1136,6 @@ class HardwareZScanLockMode(AlwaysOnLockMode):
         def interpret_z_offsets_string(z_offsets_string):
             """Example: '1:4:0.5:2,4,5,5,5' gets converted to '1.,1.,1.5,1.5,2.,2.,2.5,2.5,4.,5.,-1.,-5.5'
             do you mean Example: '1:2.5:0.5:2' gets converted to '1.,1.,1.5,1.5,2.,2.,2.5,2.5'
-            doesn't work: -5:5:.1:2
             does work: -3,-3,-2,-2,-1,-1,0,0,1,1,2,2,3,3
             """
             components = z_offsets_string.split(",")

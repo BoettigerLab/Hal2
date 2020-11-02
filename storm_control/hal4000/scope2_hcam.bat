@@ -1,1 +1,1 @@
-python hal4000.py xml/scope2_hcam_config.xml
+activate Hal3 && python hal4000.py xml/scope2_config.xml
