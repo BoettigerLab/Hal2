@@ -65,14 +65,22 @@ class APTcontroller():
             Y = y * self.um_to_unit
             rangeX = self.motorX.get_stage_axis_info()
             rangeY = self.motorY.get_stage_axis_info()
-            if X > rangeX[0] and X < rangeX[1]:
+            print('Moving to X=')
+            print(X)
+            print('Moving to Y=')
+            print(Y)
+            print('x-range')
+            print(rangeX)
+            print('y-range')
+            print(rangeY)
+            if True: # X > rangeX[0] and X < rangeX[1]:
                 self.motorX.move_to(X)  # self, value, blocking = False)
             else:
-                print('requested move outside max range!')
-            if Y > rangeY[0] and Y < rangeY[1]:
+                print('requested move outside max X range!')
+            if True: # Y > rangeY[0] and Y < rangeY[1]:
                 self.motorY.move_to(Y)
             else:
-                print('requested move outside max range!')
+                print('requested move outside max Y range!')
 
     ## goRelative
     #
@@ -84,13 +92,19 @@ class APTcontroller():
             # self.jog(0.0,0.0)
             X =  dx * self.um_to_unit
             Y =  dy * self.um_to_unit
+            print('Moving by X=')
+            print(X)
+            print('Moving by Y=')
+            print(Y)
             rangeX = self.motorX.get_stage_axis_info()
             rangeY = self.motorY.get_stage_axis_info()
-            if  X > rangeX[0] and X < rangeX[1]:
+            print('range X')
+            print(rangeX)
+            if  True: # X > rangeX[0] and X < rangeX[1]:
                 self.motorX.move_by(X)
             else:
                 print('requested move outside max X range!')
-            if  Y > rangeY[0] and Y < rangeY[1]:
+            if  True: # Y > rangeY[0] and Y < rangeY[1]:
                 self.motorY.move_by(Y)
             else:
                 print('requested move outside max Y range!')
@@ -102,8 +116,8 @@ class APTcontroller():
     #
     def position(self):
         if self.good:
-            x0 = self.motorX.position  # query single axis
-            y0 = self.motorY.position  # query single axis
+            x0 = self.motorX.position/self.um_to_unit  # query single axis
+            y0 = self.motorY.position/self.um_to_unit  # query single axis
             return {"x" : x0,
                 "y" : y0}
 
@@ -172,7 +186,7 @@ class APTcontroller():
     def zero(self):
         if self.good:
             # not sure we need this. Currently, don't reset anything
-            xZero = self.motorX.get_move_home_parameters()[3] # the 4th item is the zero offset
-            yZero = self.motorY.get_move_home_parameters()[4] # the 4th item is the zero offset
+            xZero = self.motorX.get_move_home_parameters()[2] # the 3rd item is the zero offset
+            yZero = self.motorY.get_move_home_parameters()[3] # the 4th item is the zero offset
             print([xZero,yZero])
             # set_move_home_parameters(self, direction, lim_switch, velocity, zero_offset):
