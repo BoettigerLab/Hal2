@@ -11,10 +11,15 @@ Alistair Boettiger, September 2020
 V1.1
 Adapted from my PI E873 library
 
+Installation:
+pip install pyAPT
+copy APT.dll from "Thorlabs path \APT Server\" into the pyapt folder in site-packages
+
 Notes: 
 This module requires the PIPython library that ships with the PI controllers.
 It also requires the path to this library to be added to the python path (see below).
-There is probably a more elegant way to do this. 
+There is probably a more elegant way to do this.
+ 
 """
 
 
