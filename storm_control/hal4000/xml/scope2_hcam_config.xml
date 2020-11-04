@@ -5,7 +5,7 @@
   <directory type="directory">C:/Users/Beta/Data/</directory>
   
   <!-- The setup name -->
-  <setup_name type="string">scope2-hcam</setup_name>
+  <setup_name type="string">confocal-hcam</setup_name>
 
   <!-- The ui type, this is 'classic' or 'detached' -->
   <ui_type type="string">classic</ui_type>
@@ -115,86 +115,32 @@
       <class_name type="string">Camera</class_name>
       <module_name type="string">storm_control.hal4000.camera.camera</module_name>
       <camera>
-	<master type="boolean">True</master>
-	<class_name type="string">HamamatsuCameraControl</class_name>
-	<module_name type="string">storm_control.hal4000.camera.hamamatsuCameraControl</module_name>
-	<parameters>
+        <master type="boolean">True</master>
+        <class_name type="string">HamamatsuCameraControl</class_name>
+        <module_name type="string">storm_control.hal4000.camera.hamamatsuCameraControl</module_name>
+        <parameters>
+          <!-- Which camera to use -->
+          <camera_id type="int">0</camera_id>
 
-	  <!-- Which camera to use -->
-	  <camera_id type="int">0</camera_id>
+          <!-- These are the display defaults, not the camera range. -->
+          <default_max type="int">2000</default_max> 
+          <default_min type="int">100</default_min>
+          <flip_horizontal type="boolean">False</flip_horizontal>
+          <flip_vertical type="boolean">False</flip_vertical>
+          <transpose type="boolean">False</transpose>
 
-	  <!-- These are the display defaults, not the camera range. -->
-	  <default_max type="int">2000</default_max> 
-	  <default_min type="int">100</default_min>
-	  <flip_horizontal type="boolean">False</flip_horizontal>
-	  <flip_vertical type="boolean">False</flip_vertical>
-	  <transpose type="boolean">False</transpose>
+          <!-- These can be changed / editted. -->
 
-	  <!-- These can be changed / editted. -->
-
-	  <!-- This is the extension to use (if any) when saving data from this camera. -->
-	  <extension type="string"></extension>
-	  
-	  <!-- Whether or not data from this camera is saved during filming. -->
-	  <saved type="boolean">True</saved>
-
-	</parameters>
+          <!-- This is the extension to use (if any) when saving data from this camera. -->
+          <extension type="string"></extension>
+          
+          <!-- Whether or not data from this camera is saved during filming. -->
+          <saved type="boolean">True</saved>
+        </parameters>
       </camera>
     </camera1>
 
-    <!-- Crystal Technologies AOTF (Telnet) -->
-	<!-- Scope2/Hal2 version: class = CrystalTechAOTF64Bit in illumination settings -->
-    <ctech_aotf>
-      <module_name type="string">storm_control.sc_hardware.crystalTechnologies.aotfModule</module_name>
-      <class_name type="string">AOTF64BitModule</class_name>   <!--Updated. was: AOTFTelnet -->
-      <configuration>
-	<use_fsk type="boolean">True</use_fsk>
-	<fsk_mode type="int">1</fsk_mode>  <!--  storm5 with python32 uses 3. hbaci1 uses 1 -->
-	<python32_exe type="string">C:\Python27_32bit\python.exe</python32_exe>
-	<!--   <ip_address type="string">192.168.10.4</ip_address>    REMOVED, not using ELNET  -->
-
-	 <!-- 
-	 STORM5 Crystal Technologies AOTF (Telnet)
-  <class_name type="string">AOTF64BitModule</class_name>
-      <configuration>
-	<use_fsk type="boolean">True</use_fsk>
-	<fsk_mode type="int">3</fsk_mode>
-	<python32_exe type="string">C:\Python27_32bit\python.exe</python32_exe>
-	 
-	 -->
-	
-	
-	<ch750>
-	  <maximum type="int">8000</maximum>
-	  <channel type="int">0</channel>
-	  <off_frequency type="float">20.0</off_frequency>
-	  <on_frequency type="float">75.71</on_frequency>   <!-- hbaic_hcam: 75.71. STORM6/Scope2: 75.90 (test)-->
-	</ch750>
-
-	<ch647>
-	  <maximum type="int">8000</maximum>  <!-- hbaic_hcam:7400. Scope2: 8000 (test)-->
-	  <channel type="int">1</channel>
-	  <off_frequency type="float">20.0</off_frequency>
-	  <on_frequency type="float">90.53</on_frequency>    <!-- hbaic_hcam:90.16. Scope2: 90.53 (test)-->
-	</ch647>
-
-	<ch561>
-	  <maximum type="int">7000</maximum>  <!-- hbaic_hcam:6400. Scope2:  7000(test)-->
-	  <channel type="int">2</channel>
-	  <off_frequency type="float">20.0</off_frequency>
-	  <on_frequency type="float">108.56</on_frequency>   <!-- hbaic_hcam: 108.15. Scope2: 108.56 (test)-->
-	</ch561>
-
-	<ch488>
-	  <maximum type="int">5700</maximum>
-	  <channel type="int">3</channel>
-	  <off_frequency type="float">20.0</off_frequency>
-	  <on_frequency type="float">130.24</on_frequency>
-	</ch488>
-
-      </configuration>
-    </ctech_aotf>
-
+   
     <!-- DAQ control -->
     <daq>
       <module_name type="string">storm_control.sc_hardware.nationalInstruments.nidaqModule</module_name>
@@ -302,15 +248,6 @@
       </configuration>
     </daq>
 
-    <!-- Filter wheel control GUI. -->
-    <filter_wheel>
-      <class_name type="string">FilterWheel</class_name>
-      <module_name type="string">storm_control.hal4000.miscControl.filterWheel</module_name>
-      <configuration>
-	<filter_wheel_fn type="string">none_em_filter_wheel</filter_wheel_fn> <!-- STORM5: prior_controller.filter_wheel1 -->
-	<filters type="string">Penta,405,488,560,647,750,None</filters>
-      </configuration>
-    </filter_wheel>
     
     <!-- Focus lock control GUI. -->
     <focuslock validate="True">
@@ -574,6 +511,9 @@
         <units_to_microns type="float">0.007</units_to_microns>  <!-- hbaic uses 0.264   storm5 uses 0.007-->
       </configuration>
     </uc480_camera>
+    
+    
+
 
   </modules>  
 </config>

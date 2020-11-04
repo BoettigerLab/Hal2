@@ -12,8 +12,8 @@ Not currently working
 from PyQt5 import QtCore
 import storm_control.hal4000.halLib.halMessage as halMessage
 import storm_control.sc_hardware.baseClasses.stageModule as stageModule
-import storm_control.sc_hardware.APTcontroller.APTcontroller as APTcontroller # was marzhauser 
-
+import storm_control.sc_hardware.thorlabs.APTcontroller as APTcontroller # was marzhauser 
+import math
 
 class APTcontrollerStageFunctionality(stageModule.StageFunctionalityNF):  # note the "NF" module (no feedback), unlike the Marzhauser
 
@@ -26,7 +26,7 @@ class APTcontrollerStageFunctionality(stageModule.StageFunctionalityNF):  # note
 		We should be able to poll this stage directly with feedback (requires)
 		motor.is_in_motion
         """
-        time_estimate = math.sqrt(dx*dx + dy*dy)/10000.0 + 1.0
+        time_estimate = math.sqrt(dx*dx + dy*dy)/10000.0 + .01
         print("> stage move time estimate is {0:.3f} seconds".format(time_estimate))
         return time_estimate
     
@@ -48,7 +48,7 @@ class APTcontrollerStage(stageModule.StageModule):
             # self.stage.setVelocity(velocity, velocity)
             self.stage_functionality = APTcontrollerStageFunctionality(device_mutex = QtCore.QMutex(),
                                                                     stage = self.stage,
-                                                                    update_interval = 10)  # update interval dropped to 10
+                                                                    update_interval = 500)  # Ludl=500. APT is giving trouble update interval dropped to 10
 
         else:
             self.stage = None

@@ -2,7 +2,7 @@
 """
 A ctypes based interface to the Photometrics PVCAM library.
 
-Hazen 10/17
+Hazen 10/17, Alistair 10/20
 """
 import ctypes
 import numpy
@@ -405,12 +405,22 @@ class PVCAMCamera(object):
         # Reset the acquisition counters.
         self.n_captured.value = 0
         self.n_processed = 0
-
-        # Start the acquisition.
+                
+        # Start the acquisition.   
         check(pvcam.pl_exp_start_cont(self.hcam,
-                                      self.data_buffer.ctypes.data,
-                                      pvc.uns32(self.data_buffer.size)),
-              "pl_exp_start_cont")
+                                          pvc.ulong64(self.data_buffer.ctypes.data),  # This seems to work. Not having ulong64 gave errors: ctypes.ArgumentError: argument 2: <class 'OverflowError'>: int too long to convert  
+                                          pvc.uns32(self.data_buffer.size)),
+                  "pl_exp_start_cont")
+        '''
+        try:
+            check(pvcam.pl_exp_start_cont(self.hcam,
+                                          self.data_buffer.ctypes.data,
+                                          pvc.uns32(self.data_buffer.size)),
+                  "pl_exp_start_cont")
+        except:
+            print(err)
+            print('ERROR initializing camera!!')
+        '''
 
     def stopAcquisition(self):
         """
