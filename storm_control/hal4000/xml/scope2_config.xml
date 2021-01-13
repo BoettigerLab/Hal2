@@ -74,12 +74,12 @@
 
       <!-- List objectives available on this setup here. -->
       <parameters>
-	<flip_horizontal desc="Flip image horizontal (mosaic)" type="boolean">False</flip_horizontal>
+	<flip_horizontal desc="Flip image horizontal (mosaic)" type="boolean">True</flip_horizontal>
 	<flip_vertical desc="Flip image vertical (mosaic)" type="boolean">False</flip_vertical>
-	<transpose desc="Transpose image (mosaic)" type="boolean">False</transpose>
+	<transpose desc="Transpose image (mosaic)" type="boolean">True</transpose>
 
 	<objective desc="Current objective" type="string" values="obj1,obj2,obj3">obj1</objective>
-	<obj1 desc="Objective 1" type="custom">60x,0.108,0.0,0.0</obj1>
+	<obj1 desc="Objective 1" type="custom">60x,0.154,0.0,0.0</obj1>
 	<obj2 desc="Objective 2" type="custom">10x,1.60,0.0,0.0</obj2>
       </parameters>
     </mosaic>
@@ -126,9 +126,9 @@
 	  <!-- These are the display defaults, not the camera range. -->
 	  <default_max type="int">2000</default_max> 
 	  <default_min type="int">100</default_min>
-	  <flip_horizontal type="boolean">False</flip_horizontal>
+	  <flip_horizontal type="boolean">True</flip_horizontal>
 	  <flip_vertical type="boolean">False</flip_vertical>
-	  <transpose type="boolean">False</transpose>
+	  <transpose type="boolean">True</transpose>
 
 	  <!-- These can be changed / editted. -->
 
@@ -144,11 +144,7 @@
 
     
     
-    <!-- Removed AOTF -->
-	<!-- Scope2/Hal2 version: class = CrystalTechAOTF64Bit in illumination settings -->
-   
-    <!-- Crystal Technologies AOTF (Telnet) -->
-	<!-- Scope2/Hal2 version: class = CrystalTechAOTF64Bit in illumination settings -->
+    <!-- AOTF -->
     <ctech_aotf>
       <module_name type="string">storm_control.sc_hardware.crystalTechnologies.aotfModule</module_name>
       <class_name type="string">AOTF64BitModule</class_name>  
@@ -283,9 +279,9 @@
       <class_name type="string">FocusLock</class_name>
       <module_name type="string">storm_control.hal4000.focusLock.focusLock</module_name>
       <configuration>
-        <ir_laser type="string">ldc_irlaser</ir_laser>  <!-- none_irlaser -->
+        <ir_laser type="string">ldc_irlaser</ir_laser>  <!-- none_irlaser   NoLockMode,AlwaysOnLockMode,HardwareZScanLockMode,ZScanLockMode  -->
         <ir_power type="int">10</ir_power>
-        <lock_modes type="string">NoLockMode,AutoLockMode,AlwaysOnLockMode,OptimalLockMode,CalibrationLockMode,DiagnosticsLockMode,HardwareZScanLockMode</lock_modes>
+        <lock_modes type="string">NoLockMode,AlwaysOnLockMode,HardwareZScanLockMode,ZScanLockMode</lock_modes>
         <qpd type="string">uc480_camera</qpd>
         <z_stage type="string">mcl_zstage</z_stage>
         <hardware_z_scan validate = "True">  <!-- added for hardware_z_scan-->
@@ -415,15 +411,15 @@
       <configuration>
         <parameters>
            <!-- Updated to reflect storm5hcam, ludl peizo -->
-          <center type="float">200.0</center>  <!-- original: 50 -->
+          <center type="float">150.0</center>  <!-- original: 50 -->
           <has_center_bar type="boolean">True</has_center_bar>
-          <maximum type="float">350.0</maximum>  <!-- original: 1000 -->
+          <maximum type="float">300.0</maximum>  <!-- original: 1000 -->
           <minimum type="float">0.0</minimum>
-          <warning_high type="float">330.0</warning_high>
-          <warning_low type="float">20.0</warning_low>
+          <warning_high type="float">290.0</warning_high>
+          <warning_low type="float">10.0</warning_low>
         </parameters>
         <ao_fn_name type="string">daq.mcl.ao_task</ao_fn_name>
-        <microns_to_volts type="float">0.029</microns_to_volts>  <!-- original: 1000 -->
+        <microns_to_volts type="float">0.029</microns_to_volts>  <!-- .029  original: 1000 -->
       </configuration>
     </mcl_zstage>
 
@@ -503,14 +499,14 @@
         <background type="int">100000</background>
         <camera_id type="int">1</camera_id>
         <ini_file type="string">uc480_settings.ini</ini_file>
-        <offset_file type="string">C:/Users/Beta/MicroscopeSoftware/settings-files/cam_offsets_scope2.txt</offset_file>
+        <offset_file type="string">C:\Users\Beta\MicroscopeSoftware\storm-control\storm_control\hal4000/cam_offsets_ORCA.txt</offset_file>
         <pixel_clock type="int">25</pixel_clock> <!-- 25 -->
-        <sigma type="float">3.5</sigma>  <!-- storm5 uses 7-->
+        <sigma type="float">7</sigma>  <!-- was 3.5    storm5 uses 7-->
         <uc480_dll type="string">c:/windows/system32/uc480_64.dll</uc480_dll>
         <use_storm_analysis type="boolean">False</use_storm_analysis>
-        <x_width type="int">500</x_width>
-        <y_width type="int">100</y_width>
-        <units_to_microns type="float">-0.007</units_to_microns>  <!-- hbaic uses 0.264   storm5 uses 0.007-->
+        <x_width type="int">300</x_width>
+        <y_width type="int">150</y_width>
+        <units_to_microns type="float">-0.007</units_to_microns>  <!-- -.007 works okay.   hbaic uses 0.264   storm5 uses 0.007-->
       </configuration>
     </uc480_camera>
     

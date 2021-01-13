@@ -1108,9 +1108,11 @@ class HardwareZScanLockMode(AlwaysOnLockMode):
         """
         if self.amLocked() and isinstance(self.hzs_zvals, numpy.ndarray):
             waveform = self.hzs_zvals + LockMode.z_stage_functionality.getCurrentPosition()
-            # print(waveform)
+            print(waveform)
             minZ = 0
-            maxZ = 200 # should be importanted from parameters 
+            maxZ = 300 # should be importanted from parameters 
+            #self.scale_max = self.functionality.getParameter("maximum")
+            print(params)
             outOfRange = any(waveform<minZ) or any(waveform>maxZ)
             if outOfRange:
                 print('requested waveform out of range, recomputing')
@@ -1138,13 +1140,13 @@ class HardwareZScanLockMode(AlwaysOnLockMode):
             do you mean Example: '1:2.5:0.5:2' gets converted to '1.,1.,1.5,1.5,2.,2.,2.5,2.5'
             does work: -3,-3,-2,-2,-1,-1,0,0,1,1,2,2,3,3
             """
-            components = z_offsets_string.split(",")
+            components = z_offsets_string.split(",")  # This should be converted to passing 4 parameters
             hzs_zvals = []
             for str_ in components:
                 if ':' in str_:
                     strs = str_.split(':')
                     start,end,step = float(strs[0]),float(strs[1]),float(strs[2])
-                    hzs_zvals_ = numpy.arange(start,end+step,step) # updated to include end value. 
+                    hzs_zvals_ = numpy.arange(start,end,step) # updated to include end value. (this is bug? reomved 11/2)  hzs_zvals_ = numpy.arange(start,end+step,step) 
                     if len(strs)==4:
                         repeat = int(strs[3])
                         hzs_zvals_ = hzs_zvals_[numpy.arange(0,len(hzs_zvals_),1./repeat).astype(int)]

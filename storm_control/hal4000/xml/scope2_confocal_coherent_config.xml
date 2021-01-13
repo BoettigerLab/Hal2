@@ -325,12 +325,12 @@
       <configuration>
         <parameters>
            <!-- Updated to reflect storm5hcam, ludl peizo -->
-          <center type="float">200.0</center>  <!-- original: 50 -->
+          <center type="float">150.0</center>  <!-- original: 50 -->
           <has_center_bar type="boolean">True</has_center_bar>
-          <maximum type="float">350.0</maximum>  <!-- original: 1000 -->
+          <maximum type="float">300.0</maximum>  <!-- original: 1000 -->
           <minimum type="float">0.0</minimum>
-          <warning_high type="float">330.0</warning_high>
-          <warning_low type="float">20.0</warning_low>
+          <warning_high type="float">290.0</warning_high>
+          <warning_low type="float">10.0</warning_low>
         </parameters>
         <ao_fn_name type="string">daq.mcl.ao_task</ao_fn_name>
         <microns_to_volts type="float">0.029</microns_to_volts>  <!-- original: 1000 -->
