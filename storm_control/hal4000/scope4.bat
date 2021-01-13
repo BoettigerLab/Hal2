@@ -1,1 +1,1 @@
-python hal4000.py xml/scope4_config.xml
+python hal4000.py xml/scope4_config_ts.xml
