@@ -1,0 +1,1 @@
+activate Hal2 && python hal4000.py xml/scope3_config_ts.xml

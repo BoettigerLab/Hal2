@@ -263,7 +263,8 @@ class Positions(QtWidgets.QListView):
         elif (which_key == QtCore.Qt.Key_D):
             self.plist_model.movePosition(self.currentIndex(), self.step_size, 0.0)
         else:
-            QtGui.QListView.keyPressEvent(self, event)
+             print('not a valid key command')
+             #  QtGui.QListView.keyPressEvent(self, event)  # not a valid QT5 command!
 
     ## loadFromMosaicFileData
     #
