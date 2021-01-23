@@ -464,7 +464,7 @@
       </configuration>
     </spotcounter>
 
-    <!-- Stage control GUI -->
+    <!-- XY Stage control GUI -->
     <stage>
       <module_name type="string">storm_control.hal4000.stage.stage</module_name>
       <class_name type="string">Stage</class_name>	    
@@ -473,6 +473,20 @@
         <velocity type="float">10.0</velocity>
       </configuration>
     </stage>
+
+
+    <!-- Z stage control GUI.   # should configure this someday for the Marzhauser focus knob controller I bought. 
+    <z_stage>
+      <class_name type="string">ZStage</class_name>
+      <module_name type="string">storm_control.hal4000.miscControl.zStage</module_name>
+      <configuration>
+	<z_stage_fn type="string">pi_controller.z_stage</z_stage_fn>
+	<large_step type="float">50.0</large_step>
+	<retracted_z type="float">-100.0</retracted_z>
+	<small_step type="float">1.0</small_step>	
+      </configuration>
+    </z_stage>
+	-->
 
     <!-- TCP control -->
     <tcp_control>

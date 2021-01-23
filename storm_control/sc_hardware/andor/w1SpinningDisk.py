@@ -57,14 +57,19 @@ class W1SpinningDisk(RS232.RS232):
             [value, code] = response.split(":")[:2]
 
             # Did we get an error?
-            if (code == "N\r"):
+            if "N" in code: #  Fixed bug in original version:  if (code == "N\r"):
                 try:
                     print(">> Warning w1 error", self.error_codes[value])
                 except KeyError:
                     print(">> Warning unknown w1 error", value)                    
-                return None            
+                return None   
+            #elif "A" in code:
+            #    print("connected")
             else:
+                print(value)
+                print(code)
                 return value
+                
 
         else:
             return None

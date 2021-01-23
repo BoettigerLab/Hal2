@@ -145,18 +145,18 @@ class PiController(stageModule.StageModule):
                     # We do this so that the superclass works correctly."
                     self.stage = self.controller
                     self.stage_functionality = PiStageFunctionality(device_mutex = self.controller_mutex,
-                                                                       stage = self.stage,
-                                                                       update_interval = 500,
-                                                                       velocity = settings.get("velocity", 10))
+                                                                    stage = self.stage,
+                                                                    update_interval = 500,
+                                                                    velocity = settings.get("velocity", 10))
                     self.functionalities[self.module_name + "." + dev_name] = self.stage_functionality
                 # Z stage
                 elif (dev_name == "z_stage"):
                     settings = devices.get(dev_name)
                     z_stage_fn = PiZStageFunctionality(device_mutex = self.controller_mutex,
-                                                          parameters = settings,
-                                                          update_interval = 500,
-                                                          velocity = settings.get("velocity", 10),
-                                                          z_stage = self.controller)
+                                                       parameters = settings,
+                                                       update_interval = 500,
+                                                       velocity = settings.get("velocity", 10),
+                                                       z_stage = self.controller)
                     self.functionalities[self.module_name + "." + dev_name] = z_stage_fn
 
         else:
@@ -200,3 +200,5 @@ class PiController(stageModule.StageModule):
 
         elif message.isType("tcp message"):
             self.tcpMessage(message)
+
+            

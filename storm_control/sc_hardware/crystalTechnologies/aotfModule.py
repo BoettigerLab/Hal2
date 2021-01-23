@@ -31,6 +31,9 @@ class AOTFFunctionality(amplitudeModule.AmplitudeFunctionalityBuffered):
         if self.on:
             self.maybeRun(task = self.aotf.setAmplitude,
                           args = [self.channel, power])
+
+    def startFilm(self, power):
+        self.onOff(power, True)
         
 
 class AOTFModule(amplitudeModule.AmplitudeModule):
@@ -95,6 +98,7 @@ class AOTF64BitModule(AOTFModule):
                                 
     def __init__(self, module_params = None, **kwds):
         kwds["module_params"] = module_params
+        print("connecting to AOTF")
         self.aotf = AOTF.AOTF64Bit(python32_exe = module_params.get("configuration").get("python32_exe"))
         if not self.aotf.getStatus():
             self.aotf = None

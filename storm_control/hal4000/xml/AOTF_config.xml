@@ -1,0 +1,55 @@
+ <!-- Crystal Technologies AOTF (Telnet) -->
+	<!-- Scope2/Hal2 version: class = CrystalTechAOTF64Bit in illumination settings -->
+    <ctech_aotf>
+      <module_name type="string">storm_control.sc_hardware.crystalTechnologies.aotfModule</module_name>
+      <class_name type="string">AOTF64BitModule</class_name>  
+      <configuration>
+	<use_fsk type="boolean">True</use_fsk>
+	<fsk_mode type="int">1</fsk_mode>  
+	<python32_exe type="string">C:\Python27_32bit\python.exe</python32_exe>
+	
+    <!--  storm5 with python32 uses 3. hbaci1 uses 1 -->
+     <!--AOTF64BitModule    Updated. was: AOTFTelnet -->
+    <!--   <ip_address type="string">192.168.10.4</ip_address>    REMOVED, not using ELNET  -->
+
+	 <!-- 
+	 STORM5 Crystal Technologies AOTF (Telnet)
+  <class_name type="string">AOTF64BitModule</class_name>
+      <configuration>
+	<use_fsk type="boolean">True</use_fsk>
+	<fsk_mode type="int">3</fsk_mode>
+	<python32_exe type="string">C:\Python27_32bit\python.exe</python32_exe>
+	 
+	 -->
+	
+	
+	<ch750>
+	  <maximum type="int">8000</maximum>
+	  <channel type="int">0</channel>
+	  <off_frequency type="float">20.0</off_frequency>
+	  <on_frequency type="float">75.71</on_frequency>   <!-- hbaic_hcam: 75.71. STORM6/Scope2: 75.90 (test)-->
+	</ch750>
+
+	<ch647>
+	  <maximum type="int">8000</maximum>  <!-- hbaic_hcam:7400. Scope2: 8000 (test)-->
+	  <channel type="int">1</channel>
+	  <off_frequency type="float">20.0</off_frequency>
+	  <on_frequency type="float">90.53</on_frequency>    <!-- hbaic_hcam:90.16. Scope2: 90.53 (test)-->
+	</ch647>
+
+	<ch561>
+	  <maximum type="int">7000</maximum>  <!-- hbaic_hcam:6400. Scope2:  7000(test)-->
+	  <channel type="int">2</channel>
+	  <off_frequency type="float">20.0</off_frequency>
+	  <on_frequency type="float">108.56</on_frequency>   <!-- hbaic_hcam: 108.15. Scope2: 108.56 (test)-->
+	</ch561>
+
+	<ch488>
+	  <maximum type="int">5700</maximum>
+	  <channel type="int">3</channel>
+	  <off_frequency type="float">20.0</off_frequency>
+	  <on_frequency type="float">130.24</on_frequency>
+	</ch488>
+
+      </configuration>
+    </ctech_aotf>
