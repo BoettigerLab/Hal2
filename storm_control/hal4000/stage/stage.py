@@ -70,15 +70,15 @@ class StageView(halDialog.HalDialog):
         # Add stage UI parameters.
         self.parameters.add(params.ParameterRangeFloat(description = "Large step size (microns)",
                                                        name = "large_step_size",
-                                                       value = 25.0,
+                                                       value = 200.0,
                                                        min_value = 1.0,
-                                                       max_value = 500.0))
+                                                       max_value = 1000.0))
         
         self.parameters.add(params.ParameterRangeFloat(description = "Small step size (microns)",
                                                        name = "small_step_size",
-                                                       value = 5.0,
+                                                       value = 10.0,
                                                        min_value = 1.0,
-                                                       max_value = 50.0))
+                                                       max_value = 100.0))
         
         # UI setup.
         self.ui = stageUi.Ui_Dialog()

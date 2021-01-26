@@ -370,7 +370,7 @@
     <!-- Clemex stage -->
     <clemex_stage>
       <module_name type="string">storm_control.sc_hardware.marzhauser.marzhauserModule</module_name>
-      <class_name type="string">MarzhauserStageRS232</class_name> <!-- MarzhauserStageRS232  MarzhauserStageTango -->
+      <class_name type="string">MarzhauserStage</class_name> <!-- MarzhauserStageRS232  MarzhauserStageTango -->
       
       <configuration>	
         <port type="string">COM11</port>
@@ -471,6 +471,7 @@
       <configuration>
         <stage_functionality type="string">clemex_stage</stage_functionality> 
         <velocity type="float">10.0</velocity>
+        <large_step_size type="float">1000.0</large_step_size>
       </configuration>
     </stage>
 

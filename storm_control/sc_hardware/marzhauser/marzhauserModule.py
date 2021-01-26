@@ -1,56 +1,18 @@
 #!/usr/bin/env python
 """
 HAL module for controlling a Marzhauser stage.
-
 Hazen 04/17
 """
 import re
 import time
 
 from PyQt5 import QtCore
+
 import storm_control.hal4000.halLib.halMessage as halMessage
+
 import storm_control.sc_hardware.baseClasses.stageModule as stageModule
 import storm_control.sc_hardware.marzhauser.marzhauser as marzhauser
 
-"""
-Added Tango controller since this works in Hal1 
-Was using RS232 but it was giving errors. 
-"""
-class TangoStageFunctionality(stageModule.StageFunctionality):
-    """
-    These stages are nice because they respond quickly to commands
-    and they also provide feedback about whether or not they are
-    moving.
-    """
-    def __init__(self, update_interval = None, **kwds):
-        super().__init__(**kwds)
-        self.querying = False
-
-class MarzhauserStageTango(stageModule.StageModule):
-    """
-    Using the CLEMEX TANGO controller over USB 
-    """
-    def __init__(self, module_params = None, qt_settings = None, **kwds):
-        super().__init__(**kwds)
-
-        configuration = module_params.get("configuration") # could pass the TangoDLL path here. 
-        self.stage = marzhauser.MarzhauserTango(port = configuration.get("port"))  # use Tango (needs sc_hardware\marzhauser\marzhauser.py needs TangoDLL path)
-        
-        if self.stage.getStatus():
-            self.stage_functionality = TangoStageFunctionality(device_mutex = QtCore.QMutex(),
-                                                              stage = self.stage,
-                                                              update_interval = 500) 
-        else:
-            self.stage = None
-
-                                                                                               
-
-
-
-
-"""
-This is all for RS232 control I think, though it seems to talk to the stage but give errors
-"""
 
 class MarzhauserStageFunctionality(stageModule.StageFunctionality):
     """
@@ -78,24 +40,35 @@ class MarzhauserStageFunctionality(stageModule.StageFunctionality):
         # the stage to the commands we're sending.
         self.polling_thread = MarzhauserPollingThread(device_mutex = self.device_mutex,
                                                       is_moving_signal = self.isMoving,
-                                                      sleep_time = 10,  
+                                                      sleep_time = 100,
                                                       stage = self.stage,
-                                                      stage_position_signal = self.stagePosition)  # sleep_time dropped to 10
+                                                      stage_position_signal = self.stagePosition)
         self.polling_thread.startPolling()
 
     def goAbsolute(self, x, y):
         #
-        # Debugging all removal of stage position queries.
-        #
+        # Debugging all removal of stage position queries.  ??
+        # (absolute moves are not working without this)
         super().goAbsolute(x,y)
         self.pos_dict["x"] = x
         self.pos_dict["y"] = y
         self.stagePosition.emit(self.pos_dict)
+        
+    def goRelative(self, dx, dy):  # added 1/26/21
+        #
+        # Debugging all removal of stage position queries.
+        #
+        super().goRelative(dx,dy)
+        self.pos_dict["x"] = self.pos_dict["x"] + dx
+        self.pos_dict["y"] = self.pos_dict["y"] + dy
+        self.stagePosition.emit(self.pos_dict)
 
+        
     def handleStagePosition(self, pos_dict):
         self.pos_dict = pos_dict
         #self.querying = False
 
+    
     def handleUpdateTimer(self):
         """
         Query the stage for its current position.
@@ -195,26 +168,22 @@ class MarzhauserPollingThread(QtCore.QThread):
         self.wait()
         
 
-class MarzhauserStageRS232(stageModule.StageModule):
-    """
-    RS232 connection to stage
-    """
+class MarzhauserStage(stageModule.StageModule):
+
     def __init__(self, module_params = None, qt_settings = None, **kwds):
         super().__init__(**kwds)
 
         configuration = module_params.get("configuration")
         self.stage = marzhauser.MarzhauserRS232(baudrate = configuration.get("baudrate"),
-                                                port = configuration.get("port"))  #  RS232 stage 
-                                                                                         
+                                                port = configuration.get("port"))
         if self.stage.getStatus():
+
             # Set (maximum) stage velocity.
             velocity = configuration.get("velocity")
             self.stage.setVelocity(velocity, velocity)
             self.stage_functionality = MarzhauserStageFunctionality(device_mutex = QtCore.QMutex(),
                                                                     stage = self.stage,
-                                                                    update_interval = 10)  # update interval dropped to 10
+                                                                    update_interval = 500)
 
         else:
             self.stage = None
-
-
