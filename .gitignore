@@ -19,6 +19,12 @@
 cam_offsets_*.txt
 camoffsets_*.txt
 
+
+### 
+##
+#####
+*.bat
+
 ############
 ## Windows
 ############

@@ -108,7 +108,7 @@ class FocusLockView(halDialog.HalDialog):
     def handleLockTarget(self, new_target):
         # For convenience targets appear in the GUI as nanometers, but
         # the focus lock uses microns.
-        self.lockTarget.emit(0.001 * new_target)
+        self.lockTarget.emit(0.001 * new_target)  # dave doesn't know about this should fix this. 
             
     def handleModeComboBox(self, index):
 

@@ -10,6 +10,8 @@ import storm_control.hal4000.halLib.halMessage as halMessage
 
 import storm_control.sc_hardware.baseClasses.hardwareModule as hardwareModule
 
+class AmplitudeWorker(hardwareModule.HardwareWorker):
+    pass # removed in latest update. added back to fix compatability
 
 class AmplitudeMixin(object):
     """
@@ -71,7 +73,7 @@ class AmplitudeMixin(object):
         """
         assert False
 
-    def startFilm(self, power):
+    def startFilm(self, power):  # this was also added and may need to be removed
         """
         Called at the start of filming by illumination.illumination. Devices should
         do what ever they need to do to get ready for filming.

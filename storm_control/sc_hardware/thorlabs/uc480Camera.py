@@ -485,8 +485,11 @@ class CameraQPD(object):
         """
         data = self.capture().copy()
 
-        # The power number is the sum over the camera AOI minus the background.
-        power = numpy.sum(data.astype(numpy.int64)) - self.background
+        # # The power number is the sum over the camera AOI minus the background.
+        # numpy.sum(data.astype(numpy.int64)) - self.background  # OLD version
+        # power is the peak brightness,
+        power = numpy.amax(data.astype(numpy.int64))
+
         
         # (Simple) Check for duplicate frames.
         if (power == self.last_power):

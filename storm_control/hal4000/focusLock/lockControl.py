@@ -8,7 +8,7 @@ Hazen 04/17
 
 from PyQt5 import QtCore
 import tifffile
-
+import numpy as np
 import storm_control.hal4000.halLib.halMessage as halMessage
 
 
@@ -42,7 +42,15 @@ class LockControl(QtCore.QObject):
         return self.lock_mode.getLockTarget()
 
     def getQPDSumSignal(self):
-        return self.lock_mode.getQPDState()["sum"]
+        qpd_state = self.lock_mode.getQPDState()
+        # contains "is_good" , "image", "offset", "sigma", "sum", x_off1, y_off1, x_off2, y_off2
+        if qpd_state["x_off1"]!=0 and qpd_state["x_off2"]!=0:  # specific for two-spot method (controlled in uc480Cam) cam
+            outputValue = self.lock_mode.getQPDState()["sum"]
+        else:
+            outputValue = 0
+        # print(qpd_state)
+        # print(outputValue)
+        return outputValue
 
     def handleCheckFocusLock(self):
         """
@@ -214,6 +222,14 @@ class LockControl(QtCore.QObject):
             
         # Poll QPD again.
         self.qpd_functionality.getOffset()
+        
+        '''
+        # print state
+        im = self.lock_mode.getQPDState()["image"]
+        newSum = np.amax(im)
+        self.lock_mode.getQPDState()["sum"] = newSum   # yes this updates the value shown in the display 
+        # print(self.lock_mode.getQPDState()["sum"])
+        '''
 
     def handleTCPMessage(self, message):
         """

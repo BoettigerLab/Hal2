@@ -42,8 +42,8 @@ class LockModeException(halExceptions.HalException):
 class FindSumMixin(object):
     """
     This will run a find sum scan, starting at the z stage minimum and
-    moving to the maximum, or until a maximum in the QPD sum signal is
-    found that is larger than the requested minimum sum signal.
+    moving to the maximum,
+   
     """
     fsm_pname = "find_sum"
     
@@ -83,18 +83,24 @@ class FindSumMixin(object):
             super().handleQPDUpdate(qpd_state)
             
         if (self.behavior == self.fsm_mode_name):
-            power = qpd_state["sum"]
+            # power = qpd_state["sum"]  
+            # scan for max signal rather than sum signal
+            # power = numpy.amax(qpd_state["image"])
+            power = qpd_state["sum"]  # changed uc480 to return max not sum
             z_pos = LockMode.z_stage_functionality.getCurrentPosition()
 
             # Check if the current power is greater than the
             # maximum we've seen so far.
-            if (power > self.fsm_max_sum):
+            if (power > self.fsm_max_sum) and qpd_state["x_off1"]!=0 and qpd_state["x_off2"]!=0:  # and require spots to be good 
                 self.fsm_max_sum = power
                 self.fsm_max_pos = z_pos
+                print('curr power: '+str(power)+' max_sum: '+str(self.fsm_max_sum)+'  curr pos: '+str(z_pos) + '  max pos: '+str(self.fsm_max_pos) )
+            else: 
+                print('no update. curr power: '+str(power)+' max_sum: '+str(self.fsm_max_sum)+'  curr pos: '+str(z_pos) + '  max pos: '+str(self.fsm_max_pos) )
 
             # Check if the power has started to go back down, if it has
             # then we've hopefully found the maximum.
-            if (self.fsm_max_sum > self.fsm_requested_sum) and (power < (0.5 * self.fsm_max_sum)):
+            if False: # (self.fsm_max_sum > self.fsm_requested_sum) and (power < (0.5 * self.fsm_max_sum)):  # ( the scan is not too slow, early quit is asking for trouble
                 LockMode.z_stage_functionality.goAbsolute(self.fsm_max_pos)
                 self.behaviorDone(True)
 
@@ -104,14 +110,17 @@ class FindSumMixin(object):
 
                     # Did we find anything at all?
                     if (self.fsm_max_sum > self.fsm_min_sum):
+                        print('sending to position:')
+                        print(self.fsm_max_pos)
                         LockMode.z_stage_functionality.goAbsolute(self.fsm_max_pos)
 
                     # Otherwise just go back to the center position.
                     else:
+                        print('failed to find a max sum, recentering piezo')
                         LockMode.z_stage_functionality.recenter()
 
-                    # Emit signal for failure.
-                    self.behaviorDone(False)
+                    # self.behaviorDone(False) #  Emit signal for failure.
+                    self.behaviorDone(True)
 
                 # Move up one step size.
                 else:
@@ -986,9 +995,9 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
                                        max_value = 100))
         p.add(params.ParameterRangeFloat(description = "Distance +- z to move in nanometers.",
                                          name = "range",
-                                         value = 600,
+                                         value = 1000,
                                          min_value = 100,
-                                         max_value = 5000))
+                                         max_value = 50000))
         p.add(params.ParameterRangeFloat(description = "Step size in z in nanometers.",
                                          name = "step_size",
                                          value = 100,
