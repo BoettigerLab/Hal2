@@ -69,15 +69,15 @@ class XMLRecipeParser(QtWidgets.QWidget):
         
         self.da_primitives_xml = []
 
-        # A convenient list of dave actions required for parsing a <movie> tag
-        self.movie_da_actions = [daveActions.DAMoveStage(),
+        # A convenient list of dave actions required for parsing a <movie> tag. 
+        # Also determines the order in which commands are given
+        self.movie_da_actions = [daveActions.DASetDirectory(),
+                                 daveActions.DASetParameters(),
+                                 daveActions.DAMoveStage(),
                                  daveActions.DASetFocusLockTarget(),
                                  daveActions.DAFindSum(),
                                  daveActions.DACheckFocus(),
-                                 daveActions.DARecenterPiezo(),
-                                 daveActions.DASetParameters(),
                                  daveActions.DASetProgression(),
-                                 daveActions.DASetDirectory(),
                                  daveActions.DADelay(),
                                  daveActions.DAPause(),
                                  daveActions.DATakeMovie()]
@@ -116,8 +116,22 @@ class XMLRecipeParser(QtWidgets.QWidget):
                     if new_node is not None:
                         movie_block.append(new_node)
             
+            elif child.tag == "recenter": # Handle <recenter> tag
+                print('processing recenter')
+                new_node = daveActions.DARecenterPiezo().createETree({"name": child.text})
+                print(new_node)
+                if new_node is not None:
+                    primitives_xml.append(new_node)
+                    
             elif child.tag == "valve_protocol": # Handle <valve_protocol> tag
+                print('processing valve command')
                 new_node = daveActions.DAValveProtocol().createETree({"name": child.text})
+                print(new_node)
+                if new_node is not None:
+                    primitives_xml.append(new_node)
+            
+            elif child.tag == "lockOff": # 
+                new_node = daveActions.DALockOff().createETree({"name": child.text})
                 if new_node is not None:
                     primitives_xml.append(new_node)
 

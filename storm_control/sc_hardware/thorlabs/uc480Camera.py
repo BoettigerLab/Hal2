@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 """
 Captures pictures from a Thorlabs uc480 (software) series cameras.
-
 FIXME: This only works with the uc480 Version 4.20 (or earlier) software.
        It will appear to work, then crash if you try and run it using
        ThorCam. If you install ThorCam you'll need to uninstall it
        first before installing the uc480 software. This software is
        available under the "Archive" tag in the ThorCam Software page.
-
 Hazen 08/16
 """
 
@@ -480,16 +478,12 @@ class CameraQPD(object):
     def singleQpdScan(self):
         """
         Perform a single measurement of the focus lock offset and camera sum signal.
-
         Returns [power, total_good, offset]
         """
         data = self.capture().copy()
 
-        # # The power number is the sum over the camera AOI minus the background.
-        # numpy.sum(data.astype(numpy.int64)) - self.background  # OLD version
-        # power is the peak brightness,
-        power = numpy.amax(data.astype(numpy.int64))
-
+        # The power number is the sum over the camera AOI minus the background.
+        power = numpy.sum(data.astype(numpy.int64)) - self.background
         
         # (Simple) Check for duplicate frames.
         if (power == self.last_power):
@@ -713,17 +707,17 @@ if (__name__ == "__main__"):
     cam = Camera(1)
     reps = 1000
 
-    if True:
+    if False:
         cam.setAOI(772, 566, 200, 200)
         cam.setFrameRate(verbose = True)
-        for i in range(5):
+        for i in range(100):
             print("start", i)
-            for j in range(5):
+            for j in range(100):
                 image = cam.captureImage()
             print(" stop")
 
-        im = Image.fromarray(image)
-        im.save("C:\storm-control\storm_control\sc_hardware\thorlabs\temp.png")
+        #im = Image.fromarray(image)
+        #im.save("temp.png")
 
     if False:
         cam.setAOI(100, 100, 300, 300)

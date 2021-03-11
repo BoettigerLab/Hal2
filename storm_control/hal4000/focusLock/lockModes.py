@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 """
 These classes implement various focus lock modes. They determine
-all the behaviors of the focus lock. 
-This is the Py3 version. 
-
+all the behaviors of the focus lock.
 Hazen 05/15
 """
 import math
@@ -42,8 +40,8 @@ class LockModeException(halExceptions.HalException):
 class FindSumMixin(object):
     """
     This will run a find sum scan, starting at the z stage minimum and
-    moving to the maximum,
-   
+    moving to the maximum, or until a maximum in the QPD sum signal is
+    found that is larger than the requested minimum sum signal.
     """
     fsm_pname = "find_sum"
     
@@ -83,24 +81,18 @@ class FindSumMixin(object):
             super().handleQPDUpdate(qpd_state)
             
         if (self.behavior == self.fsm_mode_name):
-            # power = qpd_state["sum"]  
-            # scan for max signal rather than sum signal
-            # power = numpy.amax(qpd_state["image"])
-            power = qpd_state["sum"]  # changed uc480 to return max not sum
+            power = qpd_state["sum"]
             z_pos = LockMode.z_stage_functionality.getCurrentPosition()
 
             # Check if the current power is greater than the
             # maximum we've seen so far.
-            if (power > self.fsm_max_sum) and qpd_state["x_off1"]!=0 and qpd_state["x_off2"]!=0:  # and require spots to be good 
+            if (power > self.fsm_max_sum):
                 self.fsm_max_sum = power
                 self.fsm_max_pos = z_pos
-                print('curr power: '+str(power)+' max_sum: '+str(self.fsm_max_sum)+'  curr pos: '+str(z_pos) + '  max pos: '+str(self.fsm_max_pos) )
-            else: 
-                print('no update. curr power: '+str(power)+' max_sum: '+str(self.fsm_max_sum)+'  curr pos: '+str(z_pos) + '  max pos: '+str(self.fsm_max_pos) )
 
             # Check if the power has started to go back down, if it has
             # then we've hopefully found the maximum.
-            if False: # (self.fsm_max_sum > self.fsm_requested_sum) and (power < (0.5 * self.fsm_max_sum)):  # ( the scan is not too slow, early quit is asking for trouble
+            if (self.fsm_max_sum > self.fsm_requested_sum) and (power < (0.5 * self.fsm_max_sum)):
                 LockMode.z_stage_functionality.goAbsolute(self.fsm_max_pos)
                 self.behaviorDone(True)
 
@@ -110,17 +102,14 @@ class FindSumMixin(object):
 
                     # Did we find anything at all?
                     if (self.fsm_max_sum > self.fsm_min_sum):
-                        print('sending to position:')
-                        print(self.fsm_max_pos)
                         LockMode.z_stage_functionality.goAbsolute(self.fsm_max_pos)
 
                     # Otherwise just go back to the center position.
                     else:
-                        print('failed to find a max sum, recentering piezo')
                         LockMode.z_stage_functionality.recenter()
 
-                    # self.behaviorDone(False) #  Emit signal for failure.
-                    self.behaviorDone(True)
+                    # Emit signal for failure.
+                    self.behaviorDone(False)
 
                 # Move up one step size.
                 else:
@@ -310,7 +299,6 @@ class ScanMixin(object):
     """
     This will do a (local) scan for the z position with the correct
     offset.
-
     FIXME: Is this the right thing for this behavior to do?
     """
     sm_pname = "scan"
@@ -454,19 +442,15 @@ class ScanMixin(object):
 class LockMode(QtCore.QObject):
     """
     The base class for all the lock modes.
-
     Modes are 'state' of the focus lock. They are called when there
     is a new QPD reading or a new frame (from the camera/feed that
     is being used to time the acquisition).
-
     The modes have control of the zstage to do the actual stage
     moves. Note that the requests to move the zstage could be
     sent as fast as the QPD reads and/or new frames are arriving,
     so if the zstage is slow it could get overwhelmed by move requests.
-
     The modes share a single parameter object. The parameters specific
     to a particular mode are stored under a mode specific attribute.
-
     To avoid name clashes as there are a lot of attributes (too many?),
     sub-class attribute names are all prefixed with a sub-class
     specific string.
@@ -509,7 +493,6 @@ class LockMode(QtCore.QObject):
         """
         Behaviors that end should call this method when they have
         finished, and indicate whether they succeeded or failed.
-
         The mode will go into the idle state and wait for 
         lockControl.LockControl to tell it what to do next.
         """
@@ -959,7 +942,6 @@ class CalibrationLockMode(JumpLockMode):
         LockMode.z_stage_functionality.recenter()        
 
 
-
 # added SoftZScanLockMode
 # 1/3/2020 for use without hardware timing
 
@@ -1034,7 +1016,7 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
         z = z_center - zrange
         stop = z_center + zrange - 0.5 * step_size
         while (z < stop):
-            for i in range(frames_to_pause-1):
+            for i in range(frames_to_pause-1):           
                 addZval(0.0)
             addZval(step_size)
             z += step_size
@@ -1086,6 +1068,7 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
 
 
 
+
 class HardwareZScanLockMode(AlwaysOnLockMode):
     """
     This holds a focus target. Then during filming it does a hardware
@@ -1117,20 +1100,6 @@ class HardwareZScanLockMode(AlwaysOnLockMode):
         """
         if self.amLocked() and isinstance(self.hzs_zvals, numpy.ndarray):
             waveform = self.hzs_zvals + LockMode.z_stage_functionality.getCurrentPosition()
-            print(waveform)
-            minZ = 0
-            maxZ = 300 # should be importanted from parameters 
-            #self.scale_max = self.functionality.getParameter("maximum")
-            print(params)
-            outOfRange = any(waveform<minZ) or any(waveform>maxZ)
-            if outOfRange:
-                print('requested waveform out of range, recomputing')
-                lenWave = waveform.size
-                waveform = numpy.linspace(maxZ/2-10,maxZ/2+10,lenWave)
-                # time.sleep(1)
-                # waveform = self.hzs_zvals + LockMode.z_stage_functionality.getCurrentPosition()
-                # print('new waveform:')
-                # print(waveform)
             return LockMode.z_stage_functionality.getDaqWaveform(waveform)
 
     def setZStageFunctionality(self, z_stage_functionality):
@@ -1143,32 +1112,8 @@ class HardwareZScanLockMode(AlwaysOnLockMode):
             super().newParameters(parameters)
         p = parameters.get(self.hzs_pname)
         self.hzs_zvals = None
-        
-        def interpret_z_offsets_string(z_offsets_string):
-            """Example: '1:4:0.5:2,4,5,5,5' gets converted to '1.,1.,1.5,1.5,2.,2.,2.5,2.5,4.,5.,-1.,-5.5'
-            do you mean Example: '1:2.5:0.5:2' gets converted to '1.,1.,1.5,1.5,2.,2.,2.5,2.5'
-            does work: -3,-3,-2,-2,-1,-1,0,0,1,1,2,2,3,3
-            """
-            components = z_offsets_string.split(",")  # This should be converted to passing 4 parameters
-            hzs_zvals = []
-            for str_ in components:
-                if ':' in str_:
-                    strs = str_.split(':')
-                    start,end,step = float(strs[0]),float(strs[1]),float(strs[2])
-                    hzs_zvals_ = numpy.arange(start,end,step) # updated to include end value. (this is bug? reomved 11/2)  hzs_zvals_ = numpy.arange(start,end+step,step) 
-                    if len(strs)==4:
-                        repeat = int(strs[3])
-                        hzs_zvals_ = hzs_zvals_[numpy.arange(0,len(hzs_zvals_),1./repeat).astype(int)]
-                    hzs_zvals.extend(hzs_zvals_)
-                else:
-                    hzs_zvals.append(float(str_))
-            return numpy.array(hzs_zvals,dtype=float)
-            
-        
         if (len(p.get("z_offsets")) > 0):
-            self.hzs_zvals = interpret_z_offsets_string(p.get("z_offsets"))
-            # print(self.hzs_zvals)
-            #self.hzs_zvals = numpy.array(list(map(float, p.get("z_offsets").split(","))))
+            self.hzs_zvals = numpy.array(list(map(float, p.get("z_offsets").split(","))))
 
     def shouldEnableLockButton(self):
         return True

@@ -74,13 +74,13 @@
 
       <!-- List objectives available on this setup here. -->
       <parameters>
-	<flip_horizontal desc="Flip image horizontal (mosaic)" type="boolean">False</flip_horizontal>
-	<flip_vertical desc="Flip image vertical (mosaic)" type="boolean">True</flip_vertical>
-	<transpose desc="Transpose image (mosaic)" type="boolean">True</transpose>
+        <flip_horizontal desc="Flip image horizontal (mosaic)" type="boolean">True</flip_horizontal>
+        <flip_vertical desc="Flip image vertical (mosaic)" type="boolean">False</flip_vertical>
+        <transpose desc="Transpose image (mosaic)" type="boolean">True</transpose>
 
-	<objective desc="Current objective" type="string" values="obj1,obj2">obj1</objective>
-	<obj1 desc="Objective 1" type="custom">60x,0.114,0.0,0.0</obj1>  <!-- 0.1 -->
-	<obj2 desc="Objective 2" type="custom">10x,1.60,0.0,0.0</obj2>
+        <objective desc="Current objective" type="string" values="obj1,obj2">obj1</objective>
+        <obj1 desc="Objective 1" type="custom">60x,0.108,0.0,0.0</obj1>  <!-- 0.108 -->
+        <obj2 desc="Objective 2" type="custom">10x,1.60,0.0,0.0</obj2>
       </parameters>
     </mosaic>
 
@@ -216,11 +216,11 @@
           </find_sum>
           <locked>
             <buffer_length type="int">5</buffer_length>  <!-- was 5 -->
-            <offset_threshold type="float">500.0</offset_threshold> <!-- was 500 -->
+            <offset_threshold type="float">0.0</offset_threshold> <!-- was 500 -->
           </locked>
           <scan>
              <scan_step type="float">1.0</scan_step>
-             <offset_threshold type="float">10000.0</offset_threshold>
+             <offset_threshold type="float">0.0</offset_threshold>
           </scan>
           <jump_size type="float">0.1</jump_size>
         </parameters>
@@ -506,25 +506,25 @@
       <configuration>
         <parameters>
           <offset_has_center_bar type="boolean">True</offset_has_center_bar>
-          <offset_maximum type="float">10.0</offset_maximum>  <!-- 1 -->
-          <offset_minimum type="float">0</offset_minimum>  <!-- -1 -->
-          <offset_warning_high type="float">9.5</offset_warning_high>
-          <offset_warning_low type="float">.5</offset_warning_low>
+          <offset_maximum type="float">15.0</offset_maximum>  <!-- 1 -->
+          <offset_minimum type="float">-5</offset_minimum>  <!-- -1 -->
+          <offset_warning_high type="float">14.5</offset_warning_high>
+          <offset_warning_low type="float">-4.5</offset_warning_low>
           <sum_maximum type="float">256.0</sum_maximum>
           <sum_minimum type="float">1.0</sum_minimum>
           <sum_warning_low type="float">5.0</sum_warning_low>
         </parameters>
-        <background type="int">15000</background>  <!-- 100000 -->
+        <background type="int">0</background>  <!-- 100000 -->
         <camera_id type="int">1</camera_id>
         <ini_file type="string">uc480_settings.ini</ini_file>
         <offset_file type="string">C:/Users/Scope3/Desktop/MicroscopeSoftware/Hal2/storm_control/hal4000/camoffsets_scope3.txt</offset_file>
         <pixel_clock type="int">25</pixel_clock>
-        <sigma type="float">5</sigma>
+        <sigma type="float">10</sigma>
         <uc480_dll type="string">c:/windows/system32/uc480_64.dll</uc480_dll>
         <use_storm_analysis type="boolean">False</use_storm_analysis>
-        <x_width type="int">180</x_width> <!-- 500 -->
-        <y_width type="int">80</y_width> <!-- 200 -->
-        <units_to_microns type="float">0.1</units_to_microns>   <!-- -.05  -0.005  Controls response speed, make small for ludl -->
+        <x_width type="int">500</x_width> <!-- 500 -->
+        <y_width type="int">250</y_width> <!-- 200 -->
+        <units_to_microns type="float">-0.1</units_to_microns>   <!-- -.05  -0.005  Controls response speed, make small for ludl -->
       </configuration>
     </uc480_camera>
     

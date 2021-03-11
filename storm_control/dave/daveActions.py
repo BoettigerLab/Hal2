@@ -117,6 +117,14 @@ class DaveAction(QtCore.QObject):
     def completeActionWithError(self, message):
         if (self.should_pause_after_error == True):
             self.should_pause = True
+        # '''
+        # Dave Stops experiment. This is most likely to happen in imaging buffer, which is bad for sample life. 
+        # '''
+        # #---------added
+        # self.protocol_is_running = False
+        # self.message = tcpMessage.TCPMessage(message_type = "Kilroy Protocol",
+                                             # message_data = {"name": "Bleaching"})
+        # #-----------------------
         self.error_signal.emit(message)
 
     ## completeActionWithWarning
@@ -820,7 +828,13 @@ class DARecenterPiezo(DaveAction):
     # @return A ElementTree object or None.
     #
     def createETree(self, dictionary):
-        recenter = dictionary.get("recenter")
+        recenter = dictionary.get("name", None)
+        print('processing recenter tree. recenter=')
+        print(recenter)
+        print('dictionary')
+        for key, value in dictionary.items() :
+            print (key, value)
+        # debugging prints
         if (recenter is not None):
             block = ElementTree.Element(str(type(self).__name__))
             return block
@@ -840,6 +854,50 @@ class DARecenterPiezo(DaveAction):
     #
     def setup(self, node):
         self.message = tcpMessage.TCPMessage(message_type = "Recenter Piezo")
+
+
+
+## DALockOff
+#
+# Deactivate the lock
+#
+class DALockOff(DaveAction):
+
+    ## __init__
+    #
+    def __init__(self):
+        DaveAction.__init__(self)
+
+        self.action_type = "hal"
+
+    ## createETree
+    #
+    # @param dictionary A dictionary.
+    #
+    # @return A ElementTree object or None.
+    #
+    def createETree(self, dictionary):
+        lockOff = dictionary.get("lockOff")
+        if (lockOff is not None):
+            block = ElementTree.Element(str(type(self).__name__))
+            return block
+
+    ## getDescriptor
+    #
+    # @return A string that describes the action.
+    #
+    def getDescriptor(self):
+        return "turn lock off"
+
+    ## setup
+    #
+    # Perform post creation initialization.
+    #
+    # @param node The node of an ElementTree.
+    #
+    def setup(self, node):
+        self.message = tcpMessage.TCPMessage(message_type = "Turn Lock Off")
+
 
 ## DASetDirectory
 #
@@ -1220,6 +1278,11 @@ class DAValveProtocol(DaveAction):
     #
     def createETree(self, dictionary):
         name = dictionary.get("name", None)
+        print('processing valve protocol tree. name=')
+        print(name)
+        print('dictionary')
+        for key, value in dictionary.items() :
+            print (key, value)
         if (name is not None):
             node = ElementTree.Element(str(type(self).__name__))
             node.text = name

@@ -10,7 +10,7 @@ from PyQt5 import QtCore
 import tifffile
 import numpy as np
 import storm_control.hal4000.halLib.halMessage as halMessage
-
+import time
 
 class LockControl(QtCore.QObject):
     controlMessage = QtCore.pyqtSignal(object)
@@ -298,6 +298,48 @@ class LockControl(QtCore.QObject):
         elif tcp_message.isType("Set Lock Target"):
             if not tcp_message.isTest():
                 self.lock_mode.setLockTarget(tcp_message.getData("lock_target"))
+            return True
+            
+        elif tcp_message.isType("Recenter Piezo"):
+            """
+            This recenters the Piezo by turning the lock off, and then reactivates the lock.
+            """
+            if not tcp_message.isTest():
+                qpd_state = self.lock_mode.getQPDState()
+                self.stopLock() # turn lock off
+                target = self.lock_mode.getLockTarget() # poll the lock. Also adds the briefest delay between on/off
+                # print('Lock target =')
+                # print(target)
+                # print('QPD state =')
+                qpd_state = self.lock_mode.getQPDState() # poll the QPD. Also adds the briefest delay between on/off
+                # print(qpd_state)
+                self.startLock()# restart lock
+                self.lock_mode.setLockTarget(target)
+            return True
+        
+        elif tcp_message.isType("Turn Lock Off"):
+            """
+            This switches the lock off. It has not been tested yet. We should add a parallel "Turn Lock On"
+            To Add to Dave, the action must be added as a new class in "DaveActions.py" (inhereting from DaveAction)
+            The Action must then be added in "v2Generator.py"  See the example of Recenter Piezo.
+            Some xml parser determines how the dictionary gets read, see example of Recenter Piezo.
+            """
+            if not tcp_message.isTest():
+                print('lock status')
+                print('current state')
+                print(self.current_state)
+                print('lock mode')
+                print(self.lock_mode)
+                print('offset fp')
+                print(self.offset_fp)
+                print('qpd functionality')
+                print(self.qpd_functionality)
+                print('timing functionality')
+                print(self.timing_functionality)
+                print('working')
+                print(self.working)
+                self.stopLock() # turn lock off
+                print('Lock Off')
             return True
         
         return False
