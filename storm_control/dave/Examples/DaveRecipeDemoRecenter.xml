@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<recipe>
+<base_directory path="" />
+<command_sequence> 
+
+    <item name = "ZScanPars"></item>  <!-- switch parameters to the zscan -->
+    <recenter>1</recenter>  <!-- switch lock off, stage relaxes to center, and on again -->
+     
+     
+     
+     <!-- usual z-scan imaging loop -->
+    <change_directory>E:\Alistair\2021-03-10_troubleshoot_zscan\Hyb_001\</change_directory>
+    <loop name = "Position Loop Conv" increment = "name">
+      <item name = "ConvZscan"></item>
+    </loop>   
+
+
+
+     <!-- bleaching buffer -->
+    <valve_protocol>Bleaching</valve_protocol>
+
+     <item name = "BleachPars"></item>  <!-- switch parameters to the bleaching -->
+     <recenter>1</recenter> <!-- switch lock off, stage relaxes to center, and on again -->
+
+
+<!-- Bleaching loop -->
+    <loop name = "Position Loop Conv" increment = "name">
+      <item name = "VeryShortBleach"></item>
+    </loop>
+
+
+
+
+    <!-- The Hyb protocol (just SSC for this demo) -->
+    <valve_protocol>Bleaching</valve_protocol>
+    
+    <item name = "ZScanPars"></item>  <!-- switch parameters to the zscan -->
+    <recenter>1</recenter>  <!-- switch lock off, stage relaxes to center, and on again -->
+     <!-- usual z-scan imaging loop -->
+    <change_directory>E:\Alistair\2021-03-10_troubleshoot_zscan\Hyb_002\</change_directory>
+    <loop name = "Position Loop Conv" increment = "name">
+      <item name = "ConvZscan"></item>
+    </loop>   
+
+    <valve_protocol>Bleaching</valve_protocol>
+</command_sequence>
+
+
+
+
+
+<item name = "ConvZscan">
+  <movie>
+    <name increment = "Yes">ConvZscan</name>
+    <length>100</length>
+    <parameters>ParsZscan_5um_250nm_750_545</parameters> <!-- could remove this, we now switch to the proper parameters before we start the loop -->
+    <lock_target>7.1</lock_target> 
+     <check_focus>
+			<num_focus_checks>50</num_focus_checks>
+			<focus_scan/> 
+			<scan_range>10</scan_range> 
+	   </check_focus>
+    <overwrite>True</overwrite>
+    <variable_entry name = "Position Loop Conv"></variable_entry>
+  </movie>
+</item>
+
+<!-- This just switches the parameters in Hal to the Bleach -->
+<item name = "BleachPars">
+  <movie>
+    <name increment = "Yes">ChangeParameters</name>
+    <length>0</length>
+    <parameters>ParsBleach_750</parameters>
+  </movie>
+</item>
+
+<!-- This just switches the parameters in Hal to the Bleach -->
+<item name = "ZScanPars">
+  <movie>
+    <name increment = "Yes">ChangeParameters</name>
+    <length>0</length>
+    <parameters>ParsZscan_5um_250nm_750_545</parameters>
+  </movie>
+</item>
+
+
+<item name = "VeryShortBleach">
+  <movie>
+    <name increment = "Yes">Bleach</name>
+    <length>3</length>
+    <parameters>ParsBleach_750</parameters>  <!-- could remove this, we now switch to the proper parameters before we start the loop -->
+   <lock_target>7.1</lock_target> 
+     <check_focus>
+			<num_focus_checks>50</num_focus_checks>
+			<focus_scan/> 
+			<scan_range>10</scan_range> 
+	   </check_focus>
+    <overwrite>True</overwrite>
+    <variable_entry name = "Position Loop Conv"></variable_entry>
+  </movie>
+</item>
+
+
+
+
+<loop_variable name = "Position Loop Conv">
+   <file_path></file_path>
+</loop_variable>
+
+
+</recipe>
