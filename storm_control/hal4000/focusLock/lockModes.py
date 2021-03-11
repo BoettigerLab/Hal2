@@ -965,28 +965,28 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
 
         # Add calibration specific parameters.
         p = self.parameters.addSubSection(self.szs_pname)
-        p.add(params.ParameterRangeInt(description = "Frames to pause between steps.",
-                                       name = "frames_to_pause",
+        p.add(params.ParameterRangeInt(description = "Frames to pause between z-steps.",
+                                       name = "frames_per_step",
                                        value = 2,
                                        min_value = 1,
                                        max_value = 100))        
-        p.add(params.ParameterRangeInt(description = "Frames before to pause at start.",
+        p.add(params.ParameterRangeInt(description = "Frames to pause before scan starts.",
                                        name = "deadtime",
-                                       value = 10,
+                                       value = 2,
                                        min_value = 1,
                                        max_value = 100))
         p.add(params.ParameterRangeFloat(description = "Distance +- z to move in nanometers.",
                                          name = "range",
-                                         value = 1000,
+                                         value = 5000,
                                          min_value = 100,
                                          max_value = 50000))
         p.add(params.ParameterRangeFloat(description = "Step size in z in nanometers.",
                                          name = "step_size",
-                                         value = 100,
+                                         value = 250,
                                          min_value = 1,
                                          max_value = 10000))
 
-    def scanSetup(self, z_center, deadtime, zrange, step_size, frames_to_pause):
+    def scanSetup(self, z_center, deadtime, zrange, step_size, frames_per_step):
         """
         Configure the variables that will be used to execute the z scan.
         zrange is in nm 
@@ -1016,7 +1016,7 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
         z = z_center - zrange
         stop = z_center + zrange - 0.5 * step_size
         while (z < stop):
-            for i in range(frames_to_pause-1):           
+            for i in range(frames_per_step-1):           
                 addZval(0.0)
             addZval(step_size)
             z += step_size
@@ -1047,7 +1047,7 @@ class ZScanLockMode(AlwaysOnLockMode): # previously inhereted from JumpLockMode
                       p.get("deadtime"), 
                       p.get("range"), 
                       p.get("step_size"), 
-                      p.get("frames_to_pause"))
+                      p.get("frames_per_step"))
                   
     def shouldEnableLockButton(self):
         return True
