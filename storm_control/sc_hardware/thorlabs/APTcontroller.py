@@ -40,9 +40,10 @@ class APTcontroller():
         self.motorY = apt.Motor(yStageSN)
         
         self.wait = 1 # move commands wait for motion to stop
-        self.unit_to_um = 1000.0 # needs calibration.  controller reports in mm 
+        self.unit_to_um = 1000.0 #  controller reports in mm 
         self.um_to_unit = 1.0/self.unit_to_um
-
+        self.motorX.set_stage_axis_info(-25,25,1,1.0)
+        self.motorY.set_stage_axis_info(-25,25,1,1.0)
 
         # Connect to the stage.
         self.good = 1
@@ -66,22 +67,26 @@ class APTcontroller():
             Y = y * self.um_to_unit
             rangeX = self.motorX.get_stage_axis_info()
             rangeY = self.motorY.get_stage_axis_info()
-            print('Moving to X=')
-            print(X)
-            print('Moving to Y=')
-            print(Y)
-            print('x-range')
-            print(rangeX)
-            print('y-range')
-            print(rangeY)
-            if True: # X > rangeX[0] and X < rangeX[1]:
+            if X > rangeX[0] and X < rangeX[1]:
+                print('Moving to X=')
+                print(X)
                 self.motorX.move_to(X)  # self, value, blocking = False)
             else:
                 print('requested move outside max X range!')
-            if True: # Y > rangeY[0] and Y < rangeY[1]:
+                print('requested move');
+                print(X)
+                print('X range')
+                print(rangeX)
+            if Y > rangeY[0] and Y < rangeY[1]:
+                print('Moving to Y=')
+                print(Y)
                 self.motorY.move_to(Y)
             else:
                 print('requested move outside max Y range!')
+                print('requested move');
+                print(Y)
+                print('Y range')
+                print(rangeY)
 
     ## goRelative
     #
@@ -93,21 +98,29 @@ class APTcontroller():
             # self.jog(0.0,0.0)
             X =  dx * self.um_to_unit
             Y =  dy * self.um_to_unit
-            print('Moving by X=')
-            print(X)
-            print('Moving by Y=')
-            print(Y)
+            x0 = self.motorX.position  # query single axis
+            y0 = self.motorY.position  # query single axis
             rangeX = self.motorX.get_stage_axis_info()
             rangeY = self.motorY.get_stage_axis_info()
-            print('range X')
-            print(rangeX)
-            if  True: # X > rangeX[0] and X < rangeX[1]:
+            if x0 + X > rangeX[0] and x0 + X < rangeX[1]:
+                print('Moving by X=')
+                print(X)
                 self.motorX.move_by(X)
             else:
+                print('requested move by');
+                print(X)
+                print('X range')
+                print(rangeX)
                 print('requested move outside max X range!')
-            if  True: # Y > rangeY[0] and Y < rangeY[1]:
+            if y0 + Y > rangeY[0] and y0 + Y < rangeY[1]:
+                print('Moving by Y=')
+                print(Y)
                 self.motorY.move_by(Y)
             else:
+                print('requested move by');
+                print(Y)
+                print('Y range')
+                print(rangeY)
                 print('requested move outside max Y range!')
             
             

@@ -440,7 +440,7 @@ class HalCore(QtCore.QObject):
 
             # Get module specific parameters.
             module_params = config.get("modules").get(module_name)
-
+            print(module_params)
             # Add the 'root' parameters to this module parameters
             # so that they are visible to the module.
             for root_param in config.getAttrs():

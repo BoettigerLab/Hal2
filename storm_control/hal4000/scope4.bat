@@ -1,1 +1,1 @@
-python hal4000.py xml/scope4_config_ts.xml
+call C:\Users\Scope4\anaconda3\Scripts\activate.bat C:\Users\Scope4\anaconda3\ && activate FLIR38 && python hal4000.py xml/scope4_setup_config.xml

@@ -147,9 +147,9 @@
 
 	  <!--
 	      What value to use for Trigger Activation, 'RisingEdge' or
-	      'FallingEdge'. 'FallingEdge' is the default if not specified.
+	      'FallingEdge'. 'FallingEdge' is the default if not specified.	  
 	  -->
-	  <trigger_activation type="string">RisingEdge</trigger_activation>	  
+	  <trigger_activation type="string">FallingEdge</trigger_activation>	  
 
 	  <!-- These are the display defaults, not the camera range. -->
 	  <default_max type="int">200</default_max> 
