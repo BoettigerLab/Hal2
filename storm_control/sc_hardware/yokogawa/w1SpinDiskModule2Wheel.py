@@ -4,12 +4,13 @@ HAL module to interface with the W1 Spinning Disk from Yokogawa/Andor.
 
 Jeffrey Moffitt 5/16
 Hazen 5/17
+Alistair 6/21
 """
 
 import storm_control.hal4000.halLib.halMessage as halMessage
 
 import storm_control.sc_hardware.baseClasses.hardwareModule as hardwareModule
-import storm_control.sc_hardware.andor.w1SpinningDisk as w1SpinningDisk
+import storm_control.sc_hardware.yokogawa.w1SpinningDisk as w1SpinningDisk
 
 import storm_control.sc_library.halExceptions as halExceptions
 import storm_control.sc_library.parameters as params
