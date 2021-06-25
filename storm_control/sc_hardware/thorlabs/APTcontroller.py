@@ -42,9 +42,13 @@ class APTcontroller():
         self.wait = 1 # move commands wait for motion to stop
         self.unit_to_um = 1000.0 #  controller reports in mm 
         self.um_to_unit = 1.0/self.unit_to_um
-        self.motorX.set_stage_axis_info(-25,25,1,1.0)
-        self.motorY.set_stage_axis_info(-25,25,1,1.0)
-
+        
+        # # we used the for the memory free KDC controllers
+        # self.motorX.set_stage_axis_info(-25,25,1,1.0)
+        # self.motorY.set_stage_axis_info(-25,25,1,1.0)
+        
+        self.motorX.set_stage_axis_info(-250,250,1,1.0)
+        self.motorY.set_stage_axis_info(-250,250,1,1.0)
         # Connect to the stage.
         self.good = 1
 
@@ -155,10 +159,16 @@ class APTcontroller():
     #
     # @param on True/False enable/disable the joystick.
     #
+
     def joystickOnOff(self, on):
         pass
-        # No joystick used
-
+        '''
+        if on:
+            self.writeline("!joy 2")
+        else:
+            self.writeline("!joy 0")
+        '''
+            
     ## lockout
     #
     # Calls joystickOnOff.
@@ -166,9 +176,9 @@ class APTcontroller():
     # @param flag True/False.
     #
     def lockout(self, flag):
-        self.joystickOnOff(not flag)
+        self.joystickOnOff(not flag)          
 
-            
+          
 
     ## setVelocity
     # Not tested yet. I think this should work if we uncomment the last two lines. 

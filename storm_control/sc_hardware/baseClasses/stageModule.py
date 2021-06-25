@@ -161,7 +161,8 @@ class StageFunctionalityNF(StageFunctionality):
         self.pos_dict["x"] = x
         self.pos_dict["y"] = y
         self.stagePosition.emit(self.pos_dict)
-        
+
+   
     def handleMovingTimer(self):
         self.isMoving.emit(False)
         self.am_moving = False

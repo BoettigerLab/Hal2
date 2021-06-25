@@ -252,11 +252,21 @@
       <class_name type="string">Stage</class_name>
       <module_name type="string">storm_control.hal4000.stage.stage</module_name>  
       <configuration>
-		<stage_functionality type="string">apt_stage</stage_functionality>   <!--none_stage  apt_stage  pi_controller.xy_stage pi_stage -->
+		<stage_functionality type="string">apt_stage</stage_functionality>   <!--none_stage  asi_stage apt_stage  pi_controller.xy_stage pi_stage -->
       </configuration>
     </stage>
 	
-	    <!-- Thorlabs APT stage  --> 
+	
+	  <!-- ASI stage
+    <asi_stage>
+      <module_name type="string">storm_control.sc_hardware.appliedScientificInstrumentation.illuminaStageModule</module_name>
+      <class_name type="string">AsiStageRS232</class_name>     
+      <configuration>	
+          <com_port type="string">COM7</com_port> 
+      </configuration>
+    </asi_stage>
+     -->
+	   <!-- Thorlabs MLS203 APT stage  --> 
     <apt_stage>
       <module_name type="string">storm_control.sc_hardware.thorlabs.APTcontrollerModule</module_name>
       <class_name type="string">APTcontrollerStage</class_name>     
@@ -266,7 +276,7 @@
       </configuration> 
     </apt_stage>   
 	
-      <!-- Thorlabs APT stage 
+      <!-- Thorlabs APT stage  
     <apt_stage>
       <module_name type="string">storm_control.sc_hardware.thorlabs.APTcontrollerModule</module_name>
       <class_name type="string">APTcontrollerStage</class_name>     
@@ -275,7 +285,7 @@
         <yStageSN type="int">27003868</yStageSN> 
       </configuration> 
     </apt_stage>   
- --> 
+	--> 
  
       <!-- Illumination (lasers, shutters, etc) control GUI. -->
     <illumination>
